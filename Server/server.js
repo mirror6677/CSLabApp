@@ -13,6 +13,7 @@ require('./api/models/course-model');
 require('./api/models/assignment-model');
 require('./api/models/problem-model');
 require('./api/models/user-model');
+require('./api/models/work-model');
 
 /*
 // For clearing all content

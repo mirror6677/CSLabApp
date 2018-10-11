@@ -3,6 +3,8 @@ import { connect } from 'dva'
 import { Avatar, Icon, Layout, Menu } from 'antd'
 import styles from './Main.css'
 import HOME_NAV from '../constants/home_nav'
+import StudentFeed from '../pages/studentFeed'
+import CourseEditor from '../pages/courseEditor'
 
 const { Header, Sider, Content } = Layout
 
@@ -48,7 +50,6 @@ class Main extends React.PureComponent {
           trigger={null}
           collapsible
           collapsed={collapsed}
-          position='fixed'
         >
           <div className={collapsed ? styles.logo_minimized : styles.logo} />
           <Menu mode="inline" onClick={this.handleNav} selectedKeys={[nav]}>
@@ -68,6 +69,10 @@ class Main extends React.PureComponent {
               <Icon type="solution" />
               <span>TA View</span>
             </Menu.Item>
+            <Menu.Item key={HOME_NAV.INSTRUCTOR}>
+              <Icon type="edit" />
+              <span>Course Editor</span>
+            </Menu.Item>
           </Menu>
         </Sider>
         <Layout>
@@ -80,8 +85,9 @@ class Main extends React.PureComponent {
             <Avatar size='large' src={image} style={{ float: 'right', marginTop: '15px', marginRight: '20px', marginLeft: '10px' }} />
             <span style={{ float: 'right' }}>{name}</span>
           </Header>
-          <Content style={{ margin: '24px 16px', padding: 24, background: '#fff' }}>
-            Content
+          <Content style={{ margin: '24px 16px', padding: 24, background: '#fff' }} className={styles.content}>
+            { nav === HOME_NAV.HOME && <StudentFeed /> }
+            { nav === HOME_NAV.INSTRUCTOR && <CourseEditor /> }
           </Content>
         </Layout>
       </Layout>

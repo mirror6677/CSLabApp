@@ -11,6 +11,10 @@ let AssignmentSchema = new Schema({
     type: String,
     default: ""
   },
+  week_offset: {
+    type: Number,
+    required: 'Please enter the week offset of the assignment'
+  },
   problems: {
     type: [Schema.Types.ObjectId],
     ref: 'problem',

@@ -1,6 +1,6 @@
 'use strict';
 module.exports = function(app) {
-  var users = require('../controllers/user_controller');
+  var users = require('../controllers/user-controller');
 
   app.route('/users')
     .get(users.getAll)
