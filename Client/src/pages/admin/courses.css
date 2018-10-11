@@ -1,0 +1,15 @@
+.container {
+  margin: 10px;
+}
+
+.card {
+  width: 90%;
+  margin: 5%;
+  cursor: default;
+}
+
+.formItem {
+  margin-left: 2px;
+  margin-right: 2px;
+  margin-bottom: 20px;
+}

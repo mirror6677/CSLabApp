@@ -1,0 +1,25 @@
+.trigger {
+  font-size: 18px;
+  line-height: 64px;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: color .3s;
+}
+
+.trigger:hover {
+  color: #1890ff;
+}
+
+.logo {
+  background: url(../assets/CompSciLogo.png) no-repeat center 0;
+  background-size: 100% auto;
+  height: 40px;
+  margin: 12px;
+}
+
+.logo_minimized {
+  background: url(../assets/CSLogo.png) no-repeat center 0;
+  background-size: 70% auto;
+  height: 40px;
+  margin: 12px;
+}

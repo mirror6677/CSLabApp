@@ -1,0 +1,32 @@
+.menu {
+  flex: 0 1 auto;
+  padding-top: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  z-index: 2;
+}
+
+.logoMenu {
+  border-bottom-width: 0px !important;
+  cursor: pointer !important;
+}
+
+.logo {
+  width: 100%;
+  height: auto;
+  max-width: 180px;
+  border-bottom-width: 0px !important;
+}
+
+.profileMenu {
+  float: right !important;
+  border-bottom-width: 0px !important;
+  cursor: pointer !important;
+}
+
+.profileName {
+  margin-right: 10px;
+}
+
+.logoutMenu {
+  text-align: center;
+}
