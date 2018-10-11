@@ -49,7 +49,6 @@ mongoose.connect(
 var store = new MongoDBStore(
   {
     uri: `mongodb://${db_config.USERNAME}:${db_config.PASSWORD}@${db_config.DATABASE}`,
-    databaseName: 'jw057',
     collection: 'auth-session'
   });
 
