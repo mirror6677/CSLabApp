@@ -6,7 +6,8 @@ const express = require('express'),
       passport = require('passport'),
       db_config = require('./credentials/db_config'),
       session = require('express-session'),
-      MongoDBStore = require('connect-mongodb-session')(session);
+      MongoDBStore = require('connect-mongodb-session')(session),
+      morgan = require('morgan');
 
 // Registering schemas
 require('./api/models/course-model');
@@ -22,20 +23,20 @@ const User = mongoose.model('user');
 const Assignment = mongoose.model('assignment');
 const Problem = mongoose.model('problem');
 
-Course.remove({}, function(err) { 
-  console.log('course removed') 
+Course.remove({}, function(err) {
+  console.log('course removed')
 });
 
-User.remove({}, function(err) { 
-  console.log('user removed') 
+User.remove({}, function(err) {
+  console.log('user removed')
 });
 
-Assignment.remove({}, function(err) { 
-  console.log('assignment removed') 
+Assignment.remove({}, function(err) {
+  console.log('assignment removed')
 });
 
-Problem.remove({}, function(err) { 
-  console.log('problem removed') 
+Problem.remove({}, function(err) {
+  console.log('problem removed')
 });
 */
 
@@ -66,6 +67,7 @@ app.use(function(req, res, next) {
   next();
 });
 
+app.use(morgan('dev'))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
