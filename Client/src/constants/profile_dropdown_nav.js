@@ -1,0 +1,6 @@
+const PROFILE_DROPDOWN_NAV = {
+  ADMIN: '0',
+  LOGOUT: '1'
+}
+
+export default PROFILE_DROPDOWN_NAV

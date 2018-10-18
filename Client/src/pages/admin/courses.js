@@ -8,9 +8,8 @@ import EditModal from '../../components/admin/EditModal'
 
 const { Meta } = Card
 
-class Courses extends React.Component {
+class Courses extends React.PureComponent {
   state = {
-    courses: {},
     showRosterModal: false,
     showEditModal: false,
     tab: 'new',
@@ -18,17 +17,6 @@ class Courses extends React.Component {
     newCourse: new Course(),
     rosterCourse: new Course(),
     editCourse: new Course()
-  }
-
-  componentDidMount() {
-    this.setState({
-      courses: Object.keys(this.props.courses).reduce((result, id) => {
-        if (this.props.courses[id].deleted === false) {
-          result[id] = this.props.courses[id]
-        }
-        return result
-      }, {})
-    })
   }
 
   getCourseCard = course => {
@@ -46,10 +34,16 @@ class Courses extends React.Component {
           <Meta
             title={course.semester}
             description={course.start_date.slice(0,10)}
+            onClick={() => this.handleCourseNav(course._id)}
+            className={styles.card_clickable}
           />
         </Card>
       </Col>
     )
+  }
+
+  handleCourseNav = courseId => {
+    this.props.history.push(`/archive/${courseId}`)
   }
 
   openRosterModal = course => {
@@ -151,7 +145,8 @@ class Courses extends React.Component {
       })
     }
     this.setState({
-      showNewCourseModal: false
+      showNewCourseModal: false,
+      newCourse: new Course()
     })
   }
 
@@ -160,7 +155,12 @@ class Courses extends React.Component {
 
   render() {
     const { tab, showNewCourseModal, showRosterModal, rosterCourse, showEditModal, editCourse } = this.state
-    const data = this.props.courses
+    const data = Object.keys(this.props.courses).reduce((result, id) => {
+      if (this.props.courses[id].deleted === false) {
+        result[id] = this.props.courses[id]
+      }
+      return result
+    }, {})
 
     const tabList = [{
       key: 'new',

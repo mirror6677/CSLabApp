@@ -96,7 +96,7 @@ class Main extends React.Component {
             </Menu.Item>
           </SubMenu>
         </Menu>
-        {nav === ADMIN_NAV.COURSES && <Courses />}
+        {nav === ADMIN_NAV.COURSES && <Courses history={this.props.history} />}
         {nav === ADMIN_NAV.STATS && <Stats />}
         {nav === ADMIN_NAV.SETTINGS && <Settings />}
       </div>

@@ -12,9 +12,9 @@ export default {
   },
 
   effects: {
-    *getAll({ payload }, { call, put }) {
+    *getAll(_, { call, put }) {
       const data = yield call(getAll)
-      if (data) {
+      if (data.data) {
         yield put({
           type: 'coursesReceived',
           payload: data.data.courses.reduce((result, item) => {
@@ -27,11 +27,11 @@ export default {
     
     *addCourse({ payload }, { call, put }) {
       const data = yield call(addCourse, payload)
-      if (data) {
+      if (data.data) {
         var res = {}
         res[data.data.course._id] = data.data.course
         yield put({
-          type: 'coursesAdded',
+          type: 'courseAdded',
           payload: res
         })
       }
@@ -39,12 +39,14 @@ export default {
 
     *updateCourse({ payload }, { call, put }) {
       const data = yield call(updateCourse, payload)
-      var res = {}
-      res[data.data.course._id] = data.data.course
-      yield put({
-        type: 'courseUpdated',
-        payload: res
-      })
+      if (data.data) {
+        var res = {}
+        res[data.data.course._id] = data.data.course
+        yield put({
+          type: 'courseUpdated',
+          payload: res
+        })
+      }
     }
   },
 
@@ -55,20 +57,16 @@ export default {
 
     courseAdded(state, action) {
       console.log(action.payload)
-      return Object.assign(state, action.payload)
+      return Object.assign({}, state, action.payload)
     },
 
     courseUpdated(state, action) {
-      return Object.assign(state, action.payload)
+      return Object.assign({}, state, action.payload)
     },
 
     courseDeleted(state, action) {
       // Deleting course is only changing the deleted flag to true
-      return Object.assign(state, action.payload)
-    },
-
-    userReceived(state, action) {
-      return
+      return Object.assign({}, state, action.payload)
     }
   }
 }

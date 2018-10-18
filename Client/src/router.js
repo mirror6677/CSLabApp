@@ -29,6 +29,7 @@ function RouterConfig({ history }) {
         <Route path='/login' exact component={Login} />
         <Route path='/admin' exact component={Admin} />
         <Route path='/ta' exact component={TAView} />
+        <Route path='/archive/:courseId' component={Main} />
       </Switch>
     </Router>
   );

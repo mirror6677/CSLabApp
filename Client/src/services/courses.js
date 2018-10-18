@@ -8,6 +8,10 @@ export const getCourse = courseId => {
   return request(`/courses/${courseId}`)
 }
 
+export const getActiveCourse = () => {
+  return request(`/course/getActiveCourse`)
+}
+
 export const addCourse = course => {
   var headers = new Headers();
   headers.append("Content-Type", "application/json");

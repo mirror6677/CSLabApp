@@ -19,6 +19,7 @@ exports.addAssignment = function(req, res) {
       Course.findByIdAndUpdate(
         req.params.course_id,
         { $push: { assignments: mongoose.Types.ObjectId(assignment._id) } },
+        { new: true },
         function(err, course) {
           if (err)
             res.send({ error: err });

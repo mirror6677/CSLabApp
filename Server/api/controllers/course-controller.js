@@ -29,6 +29,14 @@ exports.getCourse = function(req, res) {
   });
 };
 
+exports.getActiveCourse = function(req, res) {
+  Course.findOne({ active: true }, function(err, course) {
+    if (err)
+      res.send({ error: err });
+    res.json({ course });
+  });
+};
+
 exports.updateCourse = function(req, res) {
   Course.findByIdAndUpdate(req.params.course_id, req.body, { new: true }, function(err, course) {
     if (err)

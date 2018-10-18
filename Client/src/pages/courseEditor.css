@@ -1,0 +1,15 @@
+.my_editor {
+  height: calc(100vh - 150px) !important;
+}
+
+.dropdown_select {
+  width: 35%;
+  margin-right: 5%;
+  margin-bottom: 20px;
+}
+
+.submit_btn {
+  max-width: 20%;
+  min-width: 10%;
+  float: right;
+}

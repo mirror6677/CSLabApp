@@ -1,8 +1,9 @@
 import React from 'react'
 import { connect } from 'dva'
-import { Avatar, Icon, Layout, Menu } from 'antd'
+import { Avatar, Dropdown, Icon, Layout, Menu } from 'antd'
 import styles from './Main.css'
 import HOME_NAV from '../constants/home_nav'
+import PROFILE_DROPDOWN_NAV from '../constants/profile_dropdown_nav'
 import StudentFeed from '../pages/studentFeed'
 import CourseEditor from '../pages/courseEditor'
 
@@ -12,7 +13,9 @@ class Main extends React.PureComponent {
 
   componentDidMount() {
     if (this.props.user.isSignedIn) {
-      this.props.dispatch({ type: 'courses/getCourse' })
+      const courseId = this.props.match.params.courseId
+      const action = courseId ? { type: 'course/getCourse', payload: courseId } : { type: 'course/getActiveCourse' }
+      this.props.dispatch(action)
     } else {
       this.props.history.push('/login')
     }
@@ -39,9 +42,28 @@ class Main extends React.PureComponent {
     this.setState({ nav: e.key })
   }
 
+  handleProfileDropdown = e => {
+    if (e.key === PROFILE_DROPDOWN_NAV.ADMIN) {
+      this.props.history.push('/admin')
+    } else if (e.key === PROFILE_DROPDOWN_NAV.LOGOUT) {
+      window.gapi.auth2.signOut().then(()=>{
+        console.log('signed out!')
+        this.props.dispatch({ type: 'user/handleLogout' })
+      })
+    }
+  }
+
   render() {
     const { name, image } = this.props.user
     const { collapsed, nav } = this.state
+
+    const menu = (
+      <Menu onClick={this.handleProfileDropdown}>
+        <Menu.Item key={PROFILE_DROPDOWN_NAV.ADMIN} className={ styles.profile_menu }>Go to admin app</Menu.Item>
+        <Menu.Divider />
+        <Menu.Item key={PROFILE_DROPDOWN_NAV.LOGOUT} className={ styles.profile_menu }><span><Icon type="logout" style={{ marginRight: '15px' }}/>Logout</span></Menu.Item>
+      </Menu>
+    )
 
     return (
       <Layout>
@@ -82,10 +104,14 @@ class Main extends React.PureComponent {
               type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
               onClick={this.toggle}
             />
-            <Avatar size='large' src={image} style={{ float: 'right', marginTop: '15px', marginRight: '20px', marginLeft: '10px' }} />
-            <span style={{ float: 'right' }}>{name}</span>
+            <Dropdown overlay={menu} className={styles.profile_dropdown} placement='bottomRight'>
+              <div>
+                <span>{name}</span>
+                <Avatar size='large' src={image} style={{ marginLeft: '10px' }} />
+              </div>
+            </Dropdown>
           </Header>
-          <Content style={{ margin: '24px 16px', padding: 24, background: '#fff' }} className={styles.content}>
+          <Content className={styles.content}>
             { nav === HOME_NAV.HOME && <StudentFeed /> }
             { nav === HOME_NAV.INSTRUCTOR && <CourseEditor /> }
           </Content>
@@ -95,7 +121,7 @@ class Main extends React.PureComponent {
   }
 }
 
-export default connect(({ user, courses }) => ({
+export default connect(({ user, course }) => ({
   user, 
-  courses
+  course
 }))(Main)

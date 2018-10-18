@@ -19,6 +19,7 @@ exports.addProblem = function(req, res) {
       Assignment.findByIdAndUpdate(
         req.params.assignment_id,
         { $push: { problems: mongoose.Types.ObjectId(problem._id) } },
+        { new: true },
         function(err, assignment) {
           if (err)
             res.send({ error: err });

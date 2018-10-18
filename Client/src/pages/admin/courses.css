@@ -8,6 +8,10 @@
   cursor: default;
 }
 
+.card_clickable {
+  cursor: pointer;
+}
+
 .formItem {
   margin-left: 2px;
   margin-right: 2px;
