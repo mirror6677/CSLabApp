@@ -1,4 +1,4 @@
-import { getProfileData, getLoggedInUser, handleLogin, handleLogout } from '../services/user'
+import { getLoggedInUser, handleLogin, handleLogout, getProfileData, getUserData } from '../services/user'
 import getUserImageUrl from '../utils/imageUrl'
 
 export default {
@@ -6,10 +6,12 @@ export default {
   namespace: 'user',
 
   state: {
+    id: null,
     name: null,
     username: null,
     image: null,
     isSignedIn: false,
+    isAdmin: false,
     serverSession: null
   },
 
@@ -19,33 +21,39 @@ export default {
       const sessionData = data.data.session
       if (sessionData.profile) {
         const username = sessionData.profile.email.split('@')[0]
-        const userData = yield call(getProfileData, username)
-        if (userData) {
-          console.log(userData)
-          yield put({
-            type: 'updateUser',
-            payload: { 
-              name: userData.data.Name, 
-              username: userData.data.Locator,
-              image: getUserImageUrl(userData.data.Locator),
-              isSignedIn: true,
-              serverSession: sessionData.session
-            }
-          })
-          return
-        }
-      } else {
-        yield put({
-          type: 'updateUser',
-          payload: { 
-            name: null, 
-            username: null,
-            image: null,
-            isSignedIn: false,
-            serverSession: null
+        const userData = yield call(getUserData, username)
+        if (userData.data.user) {
+          const profileData = yield call(getProfileData, username)
+          if (profileData.data) {
+            yield put({
+              type: 'updateUser',
+              payload: { 
+                id: userData.data.user._id,
+                name: profileData.data.Name, 
+                username: username,
+                image: getUserImageUrl(username),
+                isSignedIn: true,
+                isAdmin: userData.data.user.admin,
+                serverSession: sessionData.session
+              }
+            })
+            return
           }
-        })
-      }
+        }
+      } 
+      // Otherwise, reset user data
+      yield put({
+        type: 'updateUser',
+        payload: { 
+          id: null,
+          name: null, 
+          username: null,
+          image: null,
+          isSignedIn: false,
+          isAdmin: false,
+          serverSession: null
+        }
+      })
     },
 
     *handleLogin({ payload }, { call, put }) {

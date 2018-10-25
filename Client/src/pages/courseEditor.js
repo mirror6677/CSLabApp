@@ -102,7 +102,7 @@ class CourseEditor extends React.PureComponent {
     console.log(assignments)
 
     return (
-      <div>
+      <div className={styles.container}>
         <Select 
           className={styles.dropdown_select} 
           value={selectedAssignment} 

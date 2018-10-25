@@ -6,6 +6,7 @@ import roster from './models/roster'
 import course from './models/course'
 import assignments from './models/assignments'
 import problems from './models/problems'
+import works from './models/works'
 
 // 1. Initialize
 const app = dva()
@@ -20,6 +21,7 @@ app.model(roster)
 app.model(course)
 app.model(assignments)
 app.model(problems)
+app.model(works)
 
 // 4. Router
 app.router(require('./router').default)

@@ -8,7 +8,8 @@ export default {
 
   effects: {
     *getCourse({ payload }, { call, put }) {
-      const data = yield call(getCourse, payload)
+      const { course, student } = payload
+      const data = yield call(getCourse, course)
       if (data.data) {
         yield put({
           type: 'courseReceived',
@@ -18,10 +19,14 @@ export default {
           type: 'assignments/getAll',
           payload: data.data.course.assignments
         })
+        yield put({
+          type: 'works/getAll',
+          payload: { course, student }
+        })
       }
     },
 
-    *getActiveCourse(_, { call, put }) {
+    *getActiveCourse({ payload }, { call, put }) {
       const data = yield call(getActiveCourse)
       if (data.data) {
         yield put({
@@ -31,6 +36,10 @@ export default {
         yield put({
           type: 'assignments/getAll',
           payload: data.data.course.assignments
+        })
+        yield put({
+          type: 'works/getAll',
+          payload: { course: data.data.course._id, student: payload.student }
         })
       }
     }

@@ -35,8 +35,7 @@
 }
 
 .content {
-  min-height: calc(100vh - 112px);
-  margin: 24px 16px; 
+  height: calc(100vh - 64px);
   padding: 24px;
-  background: #fff;
+  overflow: scroll;
 }

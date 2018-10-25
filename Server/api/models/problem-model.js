@@ -7,7 +7,7 @@ let ProblemSchema = new Schema({
     type: String,
     required: 'Please enter the name of the problem'
   },
-  dayOffset: {
+  day_offset: {
     type: Number,
     default: 0
   },

@@ -9,11 +9,6 @@ export default {
   state: {
   },
 
-  subscriptions: {
-    setup({ dispatch, history }) {
-    }
-  },
-
   effects: {
     *loadRoster({ payload }, { call, put }) {
       var res = {}

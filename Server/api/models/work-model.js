@@ -7,6 +7,10 @@ let WorkSchema = new Schema({
     type: Schema.Types.ObjectId,
     required: 'Please enter the student of this work'
   },
+  course: {
+    type: Schema.Types.ObjectId,
+    required: 'Please enter the course of this work'
+  },
   problem: {
     type: Schema.Types.ObjectId,
     required: 'Please enter the problem of this work'

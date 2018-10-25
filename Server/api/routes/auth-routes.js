@@ -51,11 +51,6 @@ module.exports = function(app) {
       // have to verify the token before using
       verify(req.body.token)
         .then(profile => {
-          console.log("verified sub=", profile.sub,
-            'name=', profile.name,
-            'email=', profile.email,
-            'domain=', profile.hd)
-  
           // make some session counters (just examples)
           if (!req.session.loginCount){
             req.session.loginCount = 1

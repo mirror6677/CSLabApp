@@ -6,7 +6,8 @@ const express = require('express'),
       passport = require('passport'),
       db_config = require('./credentials/db_config'),
       session = require('express-session'),
-      MongoDBStore = require('connect-mongodb-session')(session);
+      MongoDBStore = require('connect-mongodb-session')(session),
+      morgan = require('morgan');
 
 // Registering schemas
 require('./api/models/course-model');
@@ -17,10 +18,11 @@ require('./api/models/work-model');
 
 /*
 // For clearing all content
-const Course = mongoose.model('course');
+const Course = mongoose.model('semester_course');
 const User = mongoose.model('user');
 const Assignment = mongoose.model('assignment');
 const Problem = mongoose.model('problem');
+const Work = mongoose.model('work');
 
 Course.remove({}, function(err) { 
   console.log('course removed') 
@@ -28,6 +30,15 @@ Course.remove({}, function(err) {
 
 User.remove({}, function(err) { 
   console.log('user removed') 
+  var admin = new User({
+    username: 'jw057',
+    admin: true
+  });
+  admin.save(function(err, user) {
+    if (err)
+      console.error(err)
+    console.log('Admin user added')
+  });
 });
 
 Assignment.remove({}, function(err) { 
@@ -36,6 +47,10 @@ Assignment.remove({}, function(err) {
 
 Problem.remove({}, function(err) { 
   console.log('problem removed') 
+});
+
+Work.remove({}, function(err) { 
+  console.log('work removed') 
 });
 */
 
@@ -59,7 +74,7 @@ store.on('error', function(error) {
 });
 
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Origin", "http://localhost:8001");
   res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE")
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -69,6 +84,7 @@ app.use(function(req, res, next) {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
+app.use(morgan('combined'));
 
 app.use(session({
   secret: 'This is a secret',

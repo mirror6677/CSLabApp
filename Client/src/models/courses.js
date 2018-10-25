@@ -6,11 +6,6 @@ export default {
 
   state: {},
 
-  subscriptions: {
-    setup({ dispatch, history }) {
-    }
-  },
-
   effects: {
     *getAll(_, { call, put }) {
       const data = yield call(getAll)

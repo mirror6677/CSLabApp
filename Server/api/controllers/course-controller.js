@@ -10,7 +10,6 @@ exports.getAll = function(req, res) {
 };
 
 exports.addCourse = function(req, res) {
-  console.log(req.body)
   var new_course = new Course(req.body);
   new_course.save(function(err, course) {
     if (err) {

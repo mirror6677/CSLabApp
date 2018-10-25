@@ -12,9 +12,16 @@ const { Header, Sider, Content } = Layout
 class Main extends React.PureComponent {
 
   componentDidMount() {
-    if (this.props.user.isSignedIn) {
+    const { id, isSignedIn } = this.props.user
+    if (isSignedIn) {
       const courseId = this.props.match.params.courseId
-      const action = courseId ? { type: 'course/getCourse', payload: courseId } : { type: 'course/getActiveCourse' }
+      const action = courseId ? { 
+        type: 'course/getCourse', 
+        payload: { course: courseId, student: id }
+      } : { 
+        type: 'course/getActiveCourse',
+        payload: { student: id }
+      }
       this.props.dispatch(action)
     } else {
       this.props.history.push('/login')
@@ -54,13 +61,14 @@ class Main extends React.PureComponent {
   }
 
   render() {
-    const { name, image } = this.props.user
+    const { user, course } = this.props
+    const { id, name, image, isAdmin } = user
     const { collapsed, nav } = this.state
 
     const menu = (
       <Menu onClick={this.handleProfileDropdown}>
-        <Menu.Item key={PROFILE_DROPDOWN_NAV.ADMIN} className={ styles.profile_menu }>Go to admin app</Menu.Item>
-        <Menu.Divider />
+        { isAdmin && <Menu.Item key={PROFILE_DROPDOWN_NAV.ADMIN} className={ styles.profile_menu }>Go to admin app</Menu.Item> }
+        { isAdmin && <Menu.Divider /> }
         <Menu.Item key={PROFILE_DROPDOWN_NAV.LOGOUT} className={ styles.profile_menu }><span><Icon type="logout" style={{ marginRight: '15px' }}/>Logout</span></Menu.Item>
       </Menu>
     )
@@ -87,14 +95,14 @@ class Main extends React.PureComponent {
               <Icon type="notification" />
               <span>Alerts</span>
             </Menu.Item>
-            <Menu.Item key={HOME_NAV.TA}>
+            { course._id && (isAdmin || course.TAs.includes(id)) && <Menu.Item key={HOME_NAV.TA}>
               <Icon type="solution" />
               <span>TA View</span>
-            </Menu.Item>
-            <Menu.Item key={HOME_NAV.INSTRUCTOR}>
+            </Menu.Item> }
+            { isAdmin && <Menu.Item key={HOME_NAV.INSTRUCTOR}>
               <Icon type="edit" />
               <span>Course Editor</span>
-            </Menu.Item>
+            </Menu.Item> }
           </Menu>
         </Sider>
         <Layout>

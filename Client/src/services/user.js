@@ -10,6 +10,10 @@ export const getProfileData = username => {
   return base_request(`${BUCKNELL_API}/data/person/${username}?access_token=${BUCKNELL_API_TOKEN}`)
 }
 
+export const getUserData = username => {
+  return request(`/users/username/${username}`)
+}
+
 export const handleLogin = token => {
   console.log(token)
   return request('/login', {
