@@ -24,8 +24,8 @@ const Assignment = mongoose.model('assignment');
 const Problem = mongoose.model('problem');
 const Work = mongoose.model('work');
 
-Course.remove({}, function(err) { 
-  console.log('course removed') 
+Course.remove({}, function(err) {
+  console.log('course removed')
 });
 
 User.remove({}, function(err) { 
@@ -41,12 +41,12 @@ User.remove({}, function(err) {
   });
 });
 
-Assignment.remove({}, function(err) { 
-  console.log('assignment removed') 
+Assignment.remove({}, function(err) {
+  console.log('assignment removed')
 });
 
-Problem.remove({}, function(err) { 
-  console.log('problem removed') 
+Problem.remove({}, function(err) {
+  console.log('problem removed')
 });
 
 Work.remove({}, function(err) { 
@@ -81,6 +81,7 @@ app.use(function(req, res, next) {
   next();
 });
 
+app.use(morgan('dev'))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
