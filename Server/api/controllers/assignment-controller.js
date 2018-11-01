@@ -4,9 +4,11 @@ const mongoose = require('mongoose'),
 
 exports.getAll = function(req, res) {
   Assignment.find({}, function(err, assignments) {
-    if (err)
+    if (err) {
       res.send({error: err});
-    res.json({ assignments });
+    } else {
+      res.json({ assignments });
+    }
   });
 };
 
@@ -21,9 +23,11 @@ exports.addAssignment = function(req, res) {
         { $push: { assignments: mongoose.Types.ObjectId(assignment._id) } },
         { new: true },
         function(err, course) {
-          if (err)
+          if (err) {
             res.send({ error: err });
-          res.json({ course, assignment });
+          } else {
+            res.json({ course, assignment });
+          }
         }
       );
     }
@@ -32,17 +36,21 @@ exports.addAssignment = function(req, res) {
 
 exports.getAssignment = function(req, res) {
   Assignment.findById(req.params.assignment_id, function(err, assignment) {
-    if (err)
+    if (err) {
       res.send({ error: err });
-    res.json({ assignment });
+    } else {
+      res.json({ assignment });
+    }
   });
 };
 
 exports.updateAssignment = function(req, res) {
   Assignment.findByIdAndUpdate(req.params.assignment_id, req.body, { new: true }, function(err, assignment) {
-    if (err)
+    if (err) {
       res.send({ error: err });
-    res.json({ assignment });
+    } else {
+      res.json({ assignment });
+    }
   });
 };
 
@@ -65,9 +73,11 @@ exports.deleteAssignment = function(req, res) {
                   res.send({ error: err });
                 } else {
                   assignment.remove(function(err) {
-                    if(err)
+                    if(err) {
                       res.send({ error: err });
-                    res.json({ course, assignment });
+                    } else {
+                      res.json({ course, assignment });
+                    }
                   });
                 }
               }

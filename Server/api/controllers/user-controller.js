@@ -4,34 +4,42 @@ const mongoose = require('mongoose'),
 
 exports.getAll = function(req, res) {
   User.find({}).lean().exec(function(err, users) {
-    if (err)
+    if (err) {
       res.send({ error: err });
-    res.json({ users });
+    } else {
+      res.json({ users });
+    }
   });
 };
 
 exports.addUser = function(req, res) {
   var new_user = new User(req.body);
   new_user.save(function(err, user) {
-    if (err)
+    if (err) {
       res.send({ error: err });
-    res.json({ user });
+    } else {
+      res.json({ user });
+    }
   });
 };
 
 exports.getUser = function(req, res) {
   User.findById(req.params.user_id, function(err, user) {
-    if (err)
+    if (err) {
       res.send({ error: err });
-    res.json({ user });
+    } else {
+      res.json({ user });
+    }
   });
 }
 
 exports.updateUser = function(req, res) {
   User.findByIdAndUpdate(req.params.user_id, req.body, { new: true }, function(err, user) {
-    if (err)
+    if (err) {
       res.send({ error: err });
-    res.json({ user });
+    } else {
+      res.json({ user });
+    }
   });
 }
 
@@ -52,9 +60,11 @@ exports.deleteUser = function(req, res) {
             res.send({ error: err });
           } else {
             user.remove(function(err){
-              if (err)
+              if (err) {
                 res.send({ error: err });
-              res.json({ user, course });
+              } else {
+                res.json({ user, course });
+              }
             });
           }
         }
@@ -65,8 +75,10 @@ exports.deleteUser = function(req, res) {
 
 exports.getUserByUsername = function(req, res) {
   User.findOne({ username: req.params.username }, function(err, user) {
-    if (err)
+    if (err) {
       res.send({ error: err });
-    res.json({ user });
+    } else {
+      res.json({ user });
+    }
   });
 }

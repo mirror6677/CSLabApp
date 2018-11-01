@@ -26,7 +26,6 @@ export default class NewAssignmentModal extends React.PureComponent {
 
   onSubmit = () => {
     const { name, description, week_offset } = this.state
-    console.log(this.state)
     if (name && description && week_offset !== undefined) {
       this.props.onSubmit({ name, description, week_offset })
       this.props.onClose()

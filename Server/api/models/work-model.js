@@ -19,10 +19,6 @@ let WorkSchema = new Schema({
     type: Date,
     required: 'Please enter the last modified time of this work'
   },
-  files: {
-    type: [String],
-    default: []
-  },
   grade: {
     type: Number,
     default: 0

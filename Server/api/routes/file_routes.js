@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const AWS = require('aws-sdk')
 const multer = require('multer')
@@ -8,7 +8,7 @@ const multerS3 = require('multer-s3')
 // [labapp]
 // aws_access_key_id = ...
 // aws_secret_access_key = ...
-var credentials = new AWS.SharedIniFileCredentials({profile: 'labapp'})
+var credentials = new AWS.SharedIniFileCredentials({ profile: 'labapp' })
 AWS.config.credentials = credentials
 const s3 = new AWS.S3()
 
@@ -23,20 +23,70 @@ var upload = multer({
   storage: multerS3({
     s3: s3,
     bucket: bucket,
-    key: (req,file,cb) => {
-      cb(null, file.originalname)
+    key: (req, file, cb) => {
+      cb(null, `${req.params.work_id}/${file.originalname}`)
     }
   })
  })
 
 module.exports = function(app) {
-  app.post('/files/upload', upload.single('file'), (req,res) => {
-    console.log(req)
-    // multer-s3 does the magic of uploading to s3 given the configuration
-    // at the top of this program.
-    // https://www.npmjs.com/package/multer-s3
-    console.log('uploaded', req.files.length, 'files to s3')
+  app.get('/files', (_, res) => {
+    s3.listObjectsV2({ Bucket: bucket }, (err, data) => {
+      if (err) {
+        res.send({ error: err })
+      } else {
+        res.json(data)
+      }
+    })
+  })
 
-    res.json({result: "ok"})
-  });
-};
+  app.get('/files/:work_id', (req, res) => {
+    const params = {
+      Bucket: bucket,
+      Prefix: req.params.work_id
+    }
+    s3.listObjectsV2(params, (err, data) => {
+      if (err) {
+        res.send({ error: err })
+      } else {
+        res.json({ files: data.Contents })
+      }
+    })
+  })
+
+  app.get('/files/download/:work_id/:filename', (req, res) => {
+    const { work_id, filename } = req.params
+    s3.getSignedUrl(
+      'getObject', {
+        Bucket: bucket,
+        Key: `${work_id}/${filename}`,
+        Expires: 120
+      }, function (err, data) {
+        if (err) {
+          res.send({ error: err })
+        } else {
+          res.redirect(data)
+        }
+      }
+    )
+  })
+
+  app.post('/files/upload/:work_id', upload.single('file'), (req, res) => {
+    res.json({ result: 'ok' })
+  })
+
+  app.post('/files/remove/:work_id/:filename', (req, res) => {
+    const { work_id, filename } = req.params
+    const params = {
+      Bucket: bucket,
+      Key: `${work_id}/${filename}`
+    }
+    s3.deleteObject(params, (err, data) => {
+      if (err) {
+        res.send({ error: err })
+      } else {
+        res.json(data)
+      }
+    })
+  })
+}

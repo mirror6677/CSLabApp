@@ -3,7 +3,6 @@ import { Router, Route, Switch } from 'dva/router'
 import Main from './routes/Main'
 import Login from './routes/Login'
 import Admin from './routes/Admin'
-import TAView from './routes/TAView'
 import CLIENT_ID from '../credentials/google_client_config'
 
 function RouterConfig({ history }) {
@@ -28,7 +27,6 @@ function RouterConfig({ history }) {
         <Route path='/' exact component={Main} />
         <Route path='/login' exact component={Login} />
         <Route path='/admin' exact component={Admin} />
-        <Route path='/ta' exact component={TAView} />
         <Route path='/archive/:courseId' component={Main} />
       </Switch>
     </Router>

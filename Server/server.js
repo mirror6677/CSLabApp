@@ -37,7 +37,16 @@ User.remove({}, function(err) {
   admin.save(function(err, user) {
     if (err)
       console.error(err)
-    console.log('Admin user added')
+    console.log('Admin user added', user)
+  });
+  var admin2 = new User({
+    username: 'amm042',
+    admin: true
+  })
+  admin2.save(function(err, user) {
+    if (err)
+      console.error(err)
+    console.log('Admin user added', user)
   });
 });
 

@@ -5,6 +5,7 @@ import styles from './Main.css'
 import HOME_NAV from '../constants/home_nav'
 import PROFILE_DROPDOWN_NAV from '../constants/profile_dropdown_nav'
 import StudentFeed from '../pages/studentFeed'
+import TAFeed from '../pages/TAFeed'
 import CourseEditor from '../pages/courseEditor'
 
 const { Header, Sider, Content } = Layout
@@ -121,6 +122,7 @@ class Main extends React.PureComponent {
           </Header>
           <Content className={styles.content}>
             { nav === HOME_NAV.HOME && <StudentFeed /> }
+            { nav === HOME_NAV.TA && <TAFeed /> }
             { nav === HOME_NAV.INSTRUCTOR && <CourseEditor /> }
           </Content>
         </Layout>

@@ -4,9 +4,11 @@ const mongoose = require('mongoose'),
 
 exports.getAll = function(req, res) {
   Problem.find({}, function(err, problems) {
-    if (err)
+    if (err) {
       res.send({error: err});
-    res.json({ problems });
+    } else {
+      res.json({ problems });
+    }
   });
 };
 
@@ -21,9 +23,11 @@ exports.addProblem = function(req, res) {
         { $push: { problems: mongoose.Types.ObjectId(problem._id) } },
         { new: true },
         function(err, assignment) {
-          if (err)
+          if (err) {
             res.send({ error: err });
-          res.json({ assignment, problem });
+          } else {
+            res.json({ assignment, problem });
+          }
         }
       );
     }
@@ -32,17 +36,21 @@ exports.addProblem = function(req, res) {
 
 exports.getProblem = function(req, res) {
   Problem.findById(req.params.problem_id, function(err, problem) {
-    if (err)
+    if (err) {
       res.send({ error: err });
-    res.json({ problem });
+    } else {
+      res.json({ problem });
+    }
   });
 };
 
 exports.updateProblem = function(req, res) {
   Problem.findByIdAndUpdate(req.params.problem_id, req.body, { new: true }, function(err, problem) {
-    if (err)
+    if (err) {
       res.send({ error: err });
-    res.json({ problem });
+    } else {
+      res.json({ problem });
+    }
   });
 };
 
@@ -60,9 +68,11 @@ exports.deleteProblem = function(req, res) {
             res.send({ error: err });
           } else {
             problem.remove(function(err) {
-              if(err)
+              if(err) {
                 res.send({ error: err });
-              res.json({ assignment, problem });
+              } else {
+                res.json({ assignment, problem });
+              }
             });
           }
         }
