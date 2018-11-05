@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'dva'
-import { Button, Collapse, Tooltip,  message } from 'antd'
+import { Button, Collapse, Popconfirm, Tooltip,  message } from 'antd'
 import styles from './studentFeed.css'
 import moment from 'moment'
 import StudentSubmissionModal from '../components/StudentSubmissionModal'
@@ -15,12 +15,17 @@ class StudentFeed extends React.PureComponent {
     currWorkId: null
   }
 
+  /**
+   * Returns the collapsable panel for each problem given the assignment ID and the problem object.
+   */
   getProblemPanel = (assignment, problem) => {
     const { course, works } = this.props
     const { start_date } = course
     const work = Object.keys(works).filter(work => works[work].problem === problem._id)[0]
     var status = ''
-    if (work && works[work].submitted) {
+    if (work && works[work].graded) {
+      status = 'Graded.'
+    } else if (work && works[work].submitted) {
       status = 'Submitted.'
     } else if (work) {
       status = `Not submitted.`
@@ -37,12 +42,29 @@ class StudentFeed extends React.PureComponent {
                 {`${status} Due on ${moment(start_date).add({ days: problem.day_offset, weeks: this.props.assignments[assignment].week_offset }).format('MM/DD/YYYY')}`}
               </span>
               <Tooltip title='View/edit submission' placement='topRight'>
-                <Button 
-                  size='small' 
-                  icon='form' 
-                  style={{ margin: 'auto', marginLeft: '20px' }} 
-                  onClick={e => this.onOpenSubmissionDialog(e, problem, work)} 
-                />
+                { work && works[work].submitted ?
+                  <Popconfirm
+                    placement="leftTop" 
+                    title={'This will unsubmit your work, do you wish to continue?'} 
+                    onConfirm={ e => this.unsubmitWork(e, work) } 
+                    onCancel={ e => e.stopPropagation() }
+                    okText="Yes" 
+                    cancelText="No"
+                  >
+                    <Button 
+                      size='small' 
+                      icon='form' 
+                      style={{ margin: 'auto', marginLeft: '20px' }}
+                      onClick={ e => this.onOpenSubmissionDialog(e, problem, work) } 
+                    />
+                  </Popconfirm> :
+                  <Button 
+                    size='small' 
+                    icon='form' 
+                    style={{ margin: 'auto', marginLeft: '20px' }} 
+                    onClick={ e => this.onOpenSubmissionDialog(e, problem, work) } 
+                  />
+                }
               </Tooltip>
             </div>
           </div>
@@ -55,8 +77,12 @@ class StudentFeed extends React.PureComponent {
     )
   }
 
+  /**
+   * Called when the edit submission button is clicked, takes in a problem object and a work ID.
+   * Create a new work for the problem if one does not exist.
+   * If work is already submitted, user will need to confirm unsubmit.
+   */
   onOpenSubmissionDialog = (e, problem, work) => {
-    e.preventDefault()
     e.stopPropagation()
     if (!work) {
       this.props.dispatch({
@@ -71,26 +97,65 @@ class StudentFeed extends React.PureComponent {
           callback: this.onNewWorkCreated
         }
       })
-    } else {
-      this.setState({
-        showSubmissionModal: true,
-        currWorkId: work
-      })
+    } else if (!this.props.works[work].submitted) {
+      this.openSubmissionDialog(work)
     }
-    
   }
 
+  /**
+   * Set the state to reflect opened submission modal.
+   */
+  openSubmissionDialog = workId => {
+    this.setState({
+      showSubmissionModal: true,
+      currWorkId: workId
+    })
+  }
+
+  /**
+   * Callback function called after a new work is created.
+   */
   onNewWorkCreated = resp => {
     if (resp.data) {
-      this.setState({
-        showSubmissionModal: true,
-        currWorkId: resp.data
-      })
+      this.openSubmissionDialog(resp.data)
     } else {
       message.error(resp.err)
     }
   }
 
+  /**
+   * Called when user confirms to unsubmit the work before editing submission.
+   */
+  unsubmitWork = (e, workId) => {
+    e.stopPropagation()
+    this.props.dispatch({
+      type: 'works/updateWork',
+      payload: {
+        data: {
+          ...this.props.works[workId],
+          submitted: false,
+          last_modified: Date.now()
+        },
+        callback: this.onUnsubmitComplete
+      }
+    })
+  }
+
+  /**
+   * Callback function called after work unsubmit has been processed by the backend.
+   */
+  onUnsubmitComplete = resp => {
+    if (resp.data) {
+      this.openSubmissionDialog(resp.data)
+    } else {
+      message.error(resp.err)
+    }
+  }
+
+  /**
+   * Called when the submit button is clicked.
+   * Passed as props to the StudentSubmissionModal sub-component.
+   */
   onSubmit = () => {
     this.setState({
       submissionLoading: true
@@ -108,6 +173,9 @@ class StudentFeed extends React.PureComponent {
     })
   }
 
+  /**
+   * Callback function called after the submission has been processed by the backend.
+   */
   onSubmitComplete = resp => {
     this.setState({
       submissionLoading: false,
@@ -121,6 +189,9 @@ class StudentFeed extends React.PureComponent {
     }
   }
 
+  /**
+   * Set the state to reflect closed submission modal.
+   */
   onClose = () => {
     this.setState({
       showSubmissionModal: false,

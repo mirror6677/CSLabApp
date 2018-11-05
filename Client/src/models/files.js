@@ -1,4 +1,4 @@
-import { getAll, removeFile } from '../services/files'
+import { getAll, getFile, removeFile } from '../services/files'
 
 export default {
 
@@ -12,14 +12,24 @@ export default {
       for (var i = 0; i < payload.length; i++) {
         const data = yield call(getAll, payload[i])
         if (data.data) {
-          const filenames = data.data.files.map(file => file.Key.split('/', 2)[1])
-          result[payload[i]] = filenames
+          result[payload[i]] = data.data.files.reduce((result, item) => {
+            result[item.Key.split('/', 2)[1]] = item
+            return result
+          }, {})
         }
       }
       yield put({
         type: 'filesReceived',
         payload: result
       })
+    },
+
+    *getFile({ payload }, { call, put }) {
+      const { workId, filename } = payload
+      const data = yield call(getFile, workId, filename)
+      if (data.data) {
+        console.log(data.data)
+      }
     },
 
     *removeFile({ payload }, { call, put }) {

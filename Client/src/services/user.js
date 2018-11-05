@@ -15,7 +15,6 @@ export const getUserData = username => {
 }
 
 export const handleLogin = token => {
-  console.log(token)
   return request('/login', {
     method: 'post',
     body: JSON.stringify({ token }),

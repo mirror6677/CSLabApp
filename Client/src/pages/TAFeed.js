@@ -9,7 +9,8 @@ const Panel = Collapse.Panel
 class TAFeed extends React.PureComponent {
 
   state = {
-
+    showGradingModal: false,
+    currWorkId: null
   }
 
   componentDidMount() {
@@ -21,23 +22,26 @@ class TAFeed extends React.PureComponent {
     })
   }
 
-  getSortedProblems = () => {
+  /**
+   * Returns a work dictionary with problem IDs as keys and lists of work IDs as values.
+   */
+  getWorkDict = () => {
     const { works } = this.props
-    const sortedWorks = Object.keys(works).sort((a, b) => new Date(works[a].last_modified).getTime() - new Date(works[b].last_modified).getTime())
-    var sortedProblems = []
     var workDict = {}
-    sortedWorks.forEach(workId => {
+    Object.keys(works).forEach(workId => {
       const problemId = works[workId].problem
       if (!workDict[problemId]) {
         workDict[problemId] = [workId]
-        sortedProblems.push(problemId)
       } else {
         workDict[problemId] = workDict[problemId].concat([workId])
       }
     })
-    return { sortedProblems, workDict }
+    return workDict
   }
 
+  /**
+   * Returns the collapsable panel for each work given the work ID.
+   */
   getWorkPanel = work => {
     work = this.props.works[work]
     return (
@@ -47,8 +51,16 @@ class TAFeed extends React.PureComponent {
             {work._id}
             <div style={{ float: 'right', marginRight: '20px' }}>
               <span>
-                {`Submitted on ${moment(work.last_modified).format('MM/DD/YYYY')}`}
+                {work.graded ? 'Graded' : `Submitted on ${moment(work.last_modified).format('MM/DD/YYYY')}`}
               </span>
+              <Tooltip title='Grade' placement='topRight'>
+                <Button 
+                  size='small' 
+                  icon='form' 
+                  style={{ margin: 'auto', marginLeft: '20px' }} 
+                  onClick={e => this.onOpenGradingDialog(e, work._id)} 
+                />
+              </Tooltip>
             </div>
           </div>
         } 
@@ -59,30 +71,58 @@ class TAFeed extends React.PureComponent {
       </Panel>
     )
   }
+
+  /**
+   * Called when the grading button is clicked.
+   */
+  onOpenGradingDialog = (e, workId) => {
+    e.preventDefault()
+    e.stopPropagation()
+    this.setState({
+      showGradingModal: true,
+      currWorkId: workId
+    })
+  }
   
   render() {
-    const { problems } = this.props
-    const { sortedProblems, workDict } = this.getSortedProblems()
+    const { course, assignments, problems } = this.props
+    const sortedAssignments = Object.keys(assignments).sort((a, b) => assignments[a].week_offset - assignments[b].week_offset)
+    const workDict = this.getWorkDict()
 
     return (
       <div>
-        { sortedProblems.length && <Collapse 
+        { sortedAssignments.length && <Collapse 
           bordered={false} 
-          defaultActiveKey={[sortedProblems[0]]} 
+          defaultActiveKey={[sortedAssignments[0]]} 
           className={styles.container}
         >
-          { sortedProblems.map(problem => (
-            workDict[problem].length && <Panel 
-              header={`${problems[problem].name}`} 
-              key={problem} 
-              className={styles.problem_panel}
+          { sortedAssignments.map(assignment => (
+            assignments[assignment].problems.length && <Panel 
+              header={`${assignments[assignment].name}: ${assignments[assignment].description}`} 
+              key={assignment} 
+              className={styles.assignment_panel}
             >
-              <Collapse bordered={false}>
-                <Panel header='Original problem' className={styles.problem_description_panel}>
-                  <div dangerouslySetInnerHTML={{ __html: `${problems[problem].content}` }} />
-                </Panel>
-                { workDict[problem].map(work => this.getWorkPanel(work)) }
-              </Collapse>
+              { Object.keys(problems).length && 
+                assignments[assignment].problems
+                .sort((a, b) => problems[a].day_offset - problems[b].day_offset)
+                .map(problem => (
+                <Collapse bordered={false} key={problem} className={styles.problem_container}>
+                  <Panel 
+                    header={
+                      <div>
+                        {problems[problem].name}
+                        <span style={{ float: 'right', marginRight: '20px' }}>
+                            {`Due on ${moment(course.start_date).add({ days: problems[problem].day_offset, weeks: assignments[assignment].week_offset }).format('MM/DD/YYYY')}`}
+                          </span>
+                      </div>
+                    } 
+                    className={styles.problem_description_panel}
+                  >
+                    <div dangerouslySetInnerHTML={{ __html: `${problems[problem].content}` }} />
+                  </Panel>
+                  { workDict[problem] && workDict[problem].map(work => this.getWorkPanel(work)) }
+                </Collapse>
+              )) }
             </Panel>
           )) }
         </Collapse> }
@@ -91,9 +131,10 @@ class TAFeed extends React.PureComponent {
   }
 }
 
-export default connect(({ user, course, problems, works }) => ({
+export default connect(({ user, course, assignments, problems, works }) => ({
   user,
   course,
+  assignments,
   problems,
   works: Object.keys(works).reduce((result, item) => {
     if (works[item].submitted) {

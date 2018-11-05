@@ -54,6 +54,22 @@ module.exports = function(app) {
     })
   })
 
+  app.get('/files/:work_id/:filename', (req, res) => {
+    console.log(req.params)
+    const { work_id, filename } = req.params
+    const params = {
+      Bucket: bucket,
+      Key: `${work_id}/${filename}`
+    }
+    s3.getObject(params, (err, data) => {
+      if (err) {
+        res.send({ error: err })
+      } else {
+        res.json({ file: data })
+      }
+    })
+  })
+
   app.get('/files/download/:work_id/:filename', (req, res) => {
     const { work_id, filename } = req.params
     s3.getSignedUrl(
@@ -61,7 +77,7 @@ module.exports = function(app) {
         Bucket: bucket,
         Key: `${work_id}/${filename}`,
         Expires: 120
-      }, function (err, data) {
+      }, (err, data) => {
         if (err) {
           res.send({ error: err })
         } else {

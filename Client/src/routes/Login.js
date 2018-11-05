@@ -12,13 +12,11 @@ class Login extends React.PureComponent {
 
   componentDidUpdate() {
     if (this.props.user.isSignedIn) {
-      console.log(this.props.history)
       this.props.history.push('/')
     }
   }
 
   drawsignin = () => {
-    console.log('trying to draw login button.');
     window.gapi.signin2.render('signin-button', {
       'scope': 'profile email',
       'width': 240,

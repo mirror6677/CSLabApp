@@ -12,6 +12,7 @@ class StudentSubmissionModal extends React.PureComponent {
 
   componentDidMount() {
     const { files, workId } = this.props
+
     if (workId && files[workId]) {
       this.setState({
         fileList: files[workId].map(file => ({
@@ -81,5 +82,8 @@ class StudentSubmissionModal extends React.PureComponent {
 }
 
 export default connect(({ files }) => ({
-  files
+  files: Object.keys(files).reduce((result, item) => {
+    result[item] = Object.keys(files[item])
+    return result
+  }, {})
 }))(StudentSubmissionModal)

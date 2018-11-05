@@ -12,8 +12,6 @@ function RouterConfig({ history }) {
       client_id: CLIENT_ID,
       fetch_basic_profile: true
     }).then(auth2 => {
-      console.log('auth2.init finished.')
-      console.log('isSignedIn: ' + auth2.isSignedIn.get().toString())
       window.gapi.auth2 = auth2
     }).catch(reason => {
       console.log('auth2.init failed with: ' + reason.error)
