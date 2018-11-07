@@ -38,6 +38,7 @@ class TAFeed extends React.PureComponent {
         workDict[problemId] = workDict[problemId].concat([workId])
       }
     })
+    this.workDict = workDict
     return workDict
   }
 
@@ -86,12 +87,67 @@ class TAFeed extends React.PureComponent {
     })
   }
 
-  onSubmit = next => {
+  /**
+   * Called when the submit button is clicked.
+   * Passed as props to the TAGradingModal sub-component.
+   */
+  onSubmit = (work, next) => {
     this.setState({
       submissionLoading: true
     })
+    this.props.dispatch({
+      type: 'works/updateWork',
+      payload: {
+        data: work,
+        callback: next ? this.onSubmitCompleteAndNext : this.onSubmitComplete
+      }
+    })
   }
 
+  /**
+   * Callback function called after the submission has been processed by the backend.
+   */
+  onSubmitComplete = resp => {
+    this.setState({
+      submissionLoading: false,
+      showGradingModal: false,
+      currWorkId: null
+    })
+    if (resp.data) {
+      message.success('You work has been submitted successfully')
+    } else {
+      message.error(resp.err)
+    }
+  }
+
+  onSubmitCompleteAndNext = resp => {
+    const { currWorkId } = this.state
+    var nextWorkId = currWorkId
+    var showGradingModal = true
+    if (resp.data) {
+      message.success('You work has been submitted successfully')
+      const problem = this.workDict[resp.data.problem]
+      const currIndex = problem.indexOf(currWorkId)
+      if (currIndex + 1 < problem.length) {
+        nextWorkId = problem[currIndex + 1]
+      } else {
+        message.warning('No more submissions for the current problem')
+        showGradingModal = false
+      }
+    } else {
+      message.error(resp.err)
+    }
+    this.setState({
+      currWorkId: nextWorkId,
+      showGradingModal,
+      submissionLoading: false
+    })
+  }
+
+  /**
+   * Set the state to reflect closed submission modal.
+   * Passed as props to the TAGradingModal sub-component.
+   */
   onClose = () => {
     this.setState({
       showGradingModal: false,

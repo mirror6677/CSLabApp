@@ -32,12 +32,12 @@ let WorkSchema = new Schema({
     default: false
   },
   graded_by: {
-    type: [Schema.Types.ObjectId],
-    default: []
+    type: Schema.Types.ObjectId,
+    default: null
   },
-  comments: {
-    type: [String],
-    default: []
+  comment: {
+    type: String,
+    default: ''
   }
 });
 

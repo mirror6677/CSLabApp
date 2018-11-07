@@ -1,7 +1,8 @@
 import React from 'react'
 import { connect } from 'dva'
-import { Alert, Button, Icon, Input, Modal, Table, message } from 'antd'
+import { Alert, Button, Icon, Input, Modal, Table } from 'antd'
 import styles from './TAGradingModal.css'
+import { API_ROOT } from '../constants/routes'
 import filesize from 'filesize'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { rainbow } from 'react-syntax-highlighter/styles/hljs'
@@ -28,6 +29,25 @@ class TAGradingModal extends React.PureComponent {
         }
       })
     })
+    this.initializeFields(work)
+  }
+
+  componentDidUpdate(prevProps) {
+    const work = this.props.work
+    const prevWork = prevProps.work
+    if (work.grade !== prevWork.grade || work.comment !== prevWork.comment) {
+      this.initializeFields(work)
+    }
+  }
+
+  initializeFields = work => {
+    const grade = work.grade ? work.grade : ''
+    const comment = work.comment ? work.comment : ''
+    this.setState({ 
+      grade, 
+      comment, 
+      ready: this.checkGradeValid(grade)
+    })
   }
 
   selectFile = record => {
@@ -37,7 +57,7 @@ class TAGradingModal extends React.PureComponent {
   }
 
   downloadFile = filename => {
-    window.open(`http://localhost:8000/files/download/${this.props.work._id}/${filename}`, '_blank').focus()
+    window.open(`${API_ROOT}/files/download/${this.props.work._id}/${filename}`, '_blank').focus()
   }
 
   onCommentChanged = e => {
@@ -48,18 +68,37 @@ class TAGradingModal extends React.PureComponent {
 
   onGradeChanged = e => {
     const grade = e.target.value
+    this.setState({ 
+      grade, 
+      ready: this.checkGradeValid(grade)
+    })
+  }
+
+  checkGradeValid = grade => {
     const reg = /^(0|[1-9][0-9]*)(\.[0-9]+)?$/
-    var ready
-    if (!isNaN(grade) && reg.test(grade)) {
-      ready = true
-    } else {
-      ready = false
+    return !isNaN(grade) && reg.test(grade)
+  }
+
+  onSubmit = next => {
+    const { work, user } = this.props
+    const { grade, comment } = this.state
+    const gradedWork = {
+      ...work,
+      graded: true,
+      grade: parseFloat(grade),
+      comment,
+      graded_by: user.id
     }
-    this.setState({ grade, ready })
+    this.setState({
+      selectedFile: null,
+      comment: '',
+      grade: '',
+      ready: false
+    }, () => this.props.onSubmit(gradedWork, next))
   }
 
   render() {
-    const { visible, loading, work, onSubmit, onClose, files } = this.props
+    const { visible, loading, work, onClose, files } = this.props
     const { selectedFile, comment, grade, ready } = this.state
 
     const columns = [{
@@ -91,7 +130,7 @@ class TAGradingModal extends React.PureComponent {
       <Modal
         title={'Grade submission'}
         visible={visible}
-        onOk={onSubmit}
+        onOk={ () => this.onSubmit(false) }
         onCancel={onClose}
         width={'85%'}
         style={{ top: '50px' }}
@@ -99,10 +138,10 @@ class TAGradingModal extends React.PureComponent {
         maskClosable={false}
         footer={[
           <Button key='close' onClick={onClose}>Close</Button>,
-          <Button key='submit' type='primary' loading={loading} onClick={onSubmit} disabled={!ready}>
+          <Button key='submit' type='primary' loading={loading} onClick={ () => this.onSubmit(false) } disabled={!ready}>
             Submit
           </Button>,
-          <Button key='next' type='primary' loading={loading} onClick={ () => onSubmit(true) } disabled={!ready}>
+          <Button key='next' type='primary' loading={loading} onClick={ () => this.onSubmit(true) } disabled={!ready}>
             {'Submit & Next'}
           </Button>
         ]}
@@ -126,13 +165,18 @@ class TAGradingModal extends React.PureComponent {
               }) }
             />
             <div>
-              <TextArea rows={4} value={comment} onChange={this.onCommentChanged} placeholder={'Comment'} />
+              <TextArea 
+                rows={4} 
+                value={comment} 
+                onChange={this.onCommentChanged} 
+                placeholder={'Comment'} 
+                style={{ marginTop: '12pt', marginBottom: '12pt' }}
+              />
               <Input 
                 value={grade}
                 onChange={this.onGradeChanged}
                 placeholder={'Grade'} 
-                addonAfter={'out of 100'} 
-                style={{ marginTop: '12pt' }}
+                addonAfter={'out of 100'}
               />
             </div>
           </div>
@@ -152,6 +196,7 @@ class TAGradingModal extends React.PureComponent {
   }
 }
 
-export default connect(({ files }) => ({
+export default connect(({ user, files }) => ({
+  user,
   files
 }))(TAGradingModal)

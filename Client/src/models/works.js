@@ -49,7 +49,7 @@ export default {
           type: 'workUpdated',
           payload: res
         })
-        payload.callback && payload.callback({ data: data.data.work._id})
+        payload.callback && payload.callback({ data: data.data.work })
       } else {
         payload.callback && payload.callback({ err: data.err })
       }
@@ -62,7 +62,6 @@ export default {
     },
 
     workAdded(state, action) {
-      console.log(action.payload)
       return Object.assign({}, state, action.payload)
     },
 

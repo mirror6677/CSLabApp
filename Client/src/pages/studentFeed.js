@@ -146,7 +146,7 @@ class StudentFeed extends React.PureComponent {
    */
   onUnsubmitComplete = resp => {
     if (resp.data) {
-      this.openSubmissionDialog(resp.data)
+      this.openSubmissionDialog(resp.data._id)
     } else {
       message.error(resp.err)
     }
@@ -191,6 +191,7 @@ class StudentFeed extends React.PureComponent {
 
   /**
    * Set the state to reflect closed submission modal.
+   * Passed as props to the StudentSubmissionModal sub-component.
    */
   onClose = () => {
     this.setState({

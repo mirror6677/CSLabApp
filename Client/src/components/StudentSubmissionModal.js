@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'dva'
 import { Button, Icon, Modal, Upload, message } from 'antd'
+import { API_ROOT } from '../constants/routes'
 
 const Dragger = Upload.Dragger
 
@@ -19,7 +20,7 @@ class StudentSubmissionModal extends React.PureComponent {
           uid: file,
           name: file,
           status: 'done',
-          url: `http://localhost:8000/files/download/${workId}/${file}`
+          url: `${API_ROOT}/files/download/${workId}/${file}`
         }))
       })
     }
@@ -31,7 +32,7 @@ class StudentSubmissionModal extends React.PureComponent {
     const draggerProps = {
       name: 'file',
       multiple: true,
-      action: `http://localhost:8000/files/upload/${workId}`,
+      action: `${API_ROOT}/files/upload/${workId}`,
       onChange: info => {
         const { status, name } = info.file
         if (status === 'done') {
@@ -49,7 +50,7 @@ class StudentSubmissionModal extends React.PureComponent {
         }
         const fileList = info.fileList.map(file => {
           if (file.status === 'done' && !file.url) {
-            file.url = `http://localhost:8000/files/download/${workId}/${file.name}`
+            file.url = `${API_ROOT}/files/download/${workId}/${file.name}`
           }
           return file
         })
