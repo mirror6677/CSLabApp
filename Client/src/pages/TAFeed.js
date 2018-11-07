@@ -3,6 +3,7 @@ import { connect } from 'dva'
 import { Button, Collapse, Tooltip,  message } from 'antd'
 import styles from './TAFeed.css'
 import moment from 'moment'
+import TAGradingModal from '../components/TAGradingModal'
 
 const Panel = Collapse.Panel
 
@@ -10,6 +11,7 @@ class TAFeed extends React.PureComponent {
 
   state = {
     showGradingModal: false,
+    submissionLoading: false,
     currWorkId: null
   }
 
@@ -83,9 +85,23 @@ class TAFeed extends React.PureComponent {
       currWorkId: workId
     })
   }
+
+  onSubmit = next => {
+    this.setState({
+      submissionLoading: true
+    })
+  }
+
+  onClose = () => {
+    this.setState({
+      showGradingModal: false,
+      currWorkId: null
+    })
+  }
   
   render() {
-    const { course, assignments, problems } = this.props
+    const { course, assignments, problems, works } = this.props
+    const { showGradingModal, submissionLoading, currWorkId } = this.state
     const sortedAssignments = Object.keys(assignments).sort((a, b) => assignments[a].week_offset - assignments[b].week_offset)
     const workDict = this.getWorkDict()
 
@@ -126,6 +142,13 @@ class TAFeed extends React.PureComponent {
             </Panel>
           )) }
         </Collapse> }
+        { showGradingModal && <TAGradingModal 
+          visible={showGradingModal}
+          loading={submissionLoading}
+          work={works[currWorkId]}
+          onSubmit={this.onSubmit}
+          onClose={this.onClose}
+        /> }
       </div>
     )
   }

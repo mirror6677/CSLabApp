@@ -23,6 +23,9 @@ var upload = multer({
   storage: multerS3({
     s3: s3,
     bucket: bucket,
+    contentType: (req, file, cb) => {
+      cb(null, file.mimetype)
+    },
     key: (req, file, cb) => {
       cb(null, `${req.params.work_id}/${file.originalname}`)
     }

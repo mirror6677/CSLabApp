@@ -28,7 +28,20 @@ export default {
       const { workId, filename } = payload
       const data = yield call(getFile, workId, filename)
       if (data.data) {
-        console.log(data.data)
+        const { ContentType, Body } = data.data.file
+        if (ContentType.split('/', 2)[0] === 'text') {
+          const fileData = {
+            ContentType,
+            Body: Body.data.map(c => String.fromCharCode(c)).join('')
+          }
+          yield put({
+            type: 'fileUpdated',
+            payload: {
+              ...payload,
+              fileData
+            }
+          })
+        }
       }
     },
 
@@ -49,9 +62,32 @@ export default {
       return { ...action.payload }
     },
 
+    fileUpdated(state, action) {
+      const { workId, filename, fileData } = action.payload
+      if (state[workId] && state[workId][filename]) {
+        const work = {
+          ...state[workId],
+          [filename]: {
+            ...state[workId][filename],
+            ...fileData
+          }
+        }
+        return {
+          ...state,
+          [workId]: work
+        }
+      }
+    },
+
     fileRemoved(state, action) {
       const { workId, filename } = action.payload
-      return { ...state, workId: state[workId].filter(f => f !== filename) }
+      return { 
+        ...state, 
+        [workId]: Object.keys(state[workId]).filter(f => f !== filename).reduce((result, item) => {
+          result[item] = state[workId][item]
+          return result
+        }, {}) 
+      }
     }
   }
 }

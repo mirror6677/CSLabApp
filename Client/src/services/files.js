@@ -5,7 +5,7 @@ export const getAll = workId => {
 }
 
 export const getFile = (workId, filename) => {
-  return request(`files/${workId}/${filename}`)
+  return request(`/files/${workId}/${filename}`)
 }
 
 export const removeFile = key => {

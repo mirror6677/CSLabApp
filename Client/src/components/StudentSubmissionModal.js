@@ -26,7 +26,7 @@ class StudentSubmissionModal extends React.PureComponent {
   }
 
   render() {
-    const { visible, workId, onSubmit, onClose } = this.props
+    const { visible, loading, workId, onSubmit, onClose } = this.props
 
     const draggerProps = {
       name: 'file',
@@ -64,17 +64,18 @@ class StudentSubmissionModal extends React.PureComponent {
         visible={visible}
         onOk={onSubmit}
         onCancel={onClose}
+        maskClosable={false}
         footer={[
-          <Button key="close" onClick={onClose}>Close</Button>,
-          <Button key="submit" type="primary" onClick={onSubmit}>Submit</Button>
+          <Button key='close' onClick={onClose}>Close</Button>,
+          <Button key='submit' type='primary' loading={loading} onClick={onSubmit}>Submit</Button>
         ]}
       >
         <Dragger {...draggerProps}>
-          <p className="ant-upload-drag-icon">
-            <Icon type="inbox" />
+          <p className='ant-upload-drag-icon'>
+            <Icon type='inbox' />
           </p>
-          <p className="ant-upload-text">Click or drag files to this area to upload</p>
-          <p className="ant-upload-hint">By uploading your files here, you acknowledge that they reflect your original work and all references are properly cited</p>
+          <p className='ant-upload-text'>Click or drag files to this area to upload</p>
+          <p className='ant-upload-hint'>By uploading your files here, you acknowledge that they reflect your original work and all references are properly cited</p>
         </Dragger>
       </Modal>
     )

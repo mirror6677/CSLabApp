@@ -44,12 +44,12 @@ class StudentFeed extends React.PureComponent {
               <Tooltip title='View/edit submission' placement='topRight'>
                 { work && works[work].submitted ?
                   <Popconfirm
-                    placement="leftTop" 
+                    placement='leftTop' 
                     title={'This will unsubmit your work, do you wish to continue?'} 
                     onConfirm={ e => this.unsubmitWork(e, work) } 
                     onCancel={ e => e.stopPropagation() }
-                    okText="Yes" 
-                    cancelText="No"
+                    okText='Yes' 
+                    cancelText='No'
                   >
                     <Button 
                       size='small' 
@@ -201,7 +201,7 @@ class StudentFeed extends React.PureComponent {
   
   render() {
     const { problems, assignments } = this.props
-    const { showSubmissionModal, currWorkId } = this.state
+    const { showSubmissionModal, submissionLoading, currWorkId } = this.state
     const sortedAssignments = Object.keys(assignments).sort((a, b) => assignments[a].week_offset - assignments[b].week_offset)
 
     return (
@@ -228,6 +228,7 @@ class StudentFeed extends React.PureComponent {
         </Collapse> }
           { showSubmissionModal && <StudentSubmissionModal 
             visible={showSubmissionModal} 
+            loading={submissionLoading}
             workId={currWorkId} 
             onSubmit={this.onSubmit} 
             onClose={this.onClose} 
