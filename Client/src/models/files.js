@@ -62,6 +62,20 @@ export default {
       return { ...action.payload }
     },
 
+    fileUploaded(state, action) {
+      const { workId, filename } = action.payload
+      const work = {
+        ...state[workId],
+        [filename]: {
+          Key: `${workId}/${filename}`
+        }
+      }
+      return {
+        ...state,
+        [workId]: work
+      }
+    },
+
     fileUpdated(state, action) {
       const { workId, filename, fileData } = action.payload
       if (state[workId] && state[workId][filename]) {
