@@ -120,6 +120,12 @@ class TAFeed extends React.PureComponent {
     }
   }
 
+  /**
+   * Callback function called after the submission has been processed by the backend.
+   * This is called instead of onSubmitComplete when user clicked on Submit and next.
+   * Looks for the next submission for the current problem and update the modal.
+   * If the current submission is the last one of the current problem, modal will be closed.
+   */
   onSubmitCompleteAndNext = resp => {
     const { currWorkId } = this.state
     var nextWorkId = currWorkId
