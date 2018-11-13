@@ -208,6 +208,7 @@ class TAFeed extends React.PureComponent {
           visible={showGradingModal}
           loading={submissionLoading}
           work={works[currWorkId]}
+          totalPoints={problems[works[currWorkId].problem].total_points}
           onSubmit={this.onSubmit}
           onClose={this.onClose}
         /> }

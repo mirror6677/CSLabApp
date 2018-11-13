@@ -98,7 +98,7 @@ class TAGradingModal extends React.PureComponent {
   }
 
   render() {
-    const { visible, loading, work, onClose, files } = this.props
+    const { visible, loading, work, totalPoints, onClose, files } = this.props
     const { selectedFile, comment, grade, ready } = this.state
 
     const columns = [{
@@ -176,7 +176,7 @@ class TAGradingModal extends React.PureComponent {
                 value={grade}
                 onChange={this.onGradeChanged}
                 placeholder={'Grade'} 
-                addonAfter={'out of 100'}
+                addonAfter={`out of ${totalPoints}`}
               />
             </div>
           </div>

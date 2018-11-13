@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'dva'
-import { Button, Select } from 'antd'
+import { Button, Icon, Select, Tabs } from 'antd'
 import styles from './courseEditor.css'
 import BraftEditor, { EditorState } from 'braft-editor'
 import 'braft-editor/dist/index.css'
@@ -8,6 +8,7 @@ import NewAssignmentModal from '../components/NewAssignmentModal'
 import NewProblemModal from '../components/NewProblemModal'
 
 const Option = Select.Option
+const TabPane = Tabs.TabPane
 
 class CourseEditor extends React.PureComponent {
   
@@ -99,7 +100,6 @@ class CourseEditor extends React.PureComponent {
   render () {
     const { editorState, selectedAssignment, selectedProblem, showNewAssignmentModal, showNewProblemModal } = this.state
     const { course, assignments, problems } = this.props
-    console.log(assignments)
 
     return (
       <div className={styles.container}>
@@ -110,9 +110,12 @@ class CourseEditor extends React.PureComponent {
           onChange={this.handleAssignmentChange}
         >
           <Option value='_new'>Add new assignment</Option>
-          { course && course.assignments.map(assignment => (
-            <Option key={assignments[assignment]._id} value={assignments[assignment]._id}>{assignments[assignment].name}</Option>
-          )) }
+          { course && 
+            course.assignments
+            .sort((a, b) => assignments[a].week_offset - assignments[b].week_offset)
+            .map(assignment => (
+              <Option key={assignments[assignment]._id} value={assignments[assignment]._id}>{assignments[assignment].name}</Option>
+            )) }
         </Select>
         <Select 
           className={styles.dropdown_select} 
@@ -122,18 +125,29 @@ class CourseEditor extends React.PureComponent {
           onChange={this.handleProblemChange}
         >
           <Option value='_new'>Add new problem</Option>
-          { selectedAssignment && assignments[selectedAssignment].problems.map(problem => (
-            <Option key={problems[problem]._id} value={problems[problem]._id}>{problems[problem].name}</Option>
-          )) }
+          { selectedAssignment && 
+            assignments[selectedAssignment].problems
+            .sort((a, b) => problems[a].day_offset - problems[b].day_offset)
+            .map(problem => (
+              <Option key={problems[problem]._id} value={problems[problem]._id}>{problems[problem].name}</Option>
+            )) }
         </Select>
         <Button type="primary" className={styles.submit_btn} onClick={this.submitContent}>SAVE</Button>
-        <BraftEditor
-          disabled={selectedProblem === undefined}
-          value={editorState}
-          onChange={this.handleEditorChange}
-          onSave={this.submitContent}
-          language='en'
-        />
+        <Tabs defaultActiveKey={'1'}>
+          <TabPane tab={<span><Icon type='file-text' />Content</span>} key='1'>
+            <BraftEditor
+              className={styles.my_editor}
+              disabled={selectedProblem === undefined}
+              value={editorState}
+              onChange={this.handleEditorChange}
+              onSave={this.submitContent}
+              language='en'
+            />
+          </TabPane>
+          <TabPane tab={<span><Icon type='file-search' />Tests</span>} key='2' disabled={selectedProblem === undefined}>
+            Tab 2
+          </TabPane>
+        </Tabs>
         <NewAssignmentModal 
           visible={showNewAssignmentModal} 
           onSubmit={this.handleNewAssignmentSubmit} 

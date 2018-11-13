@@ -11,6 +11,10 @@ let ProblemSchema = new Schema({
     type: Number,
     default: 0
   },
+  total_points: {
+    type: Number,
+    default: 0
+  },
   content: {
     type: String,
     default: ""
