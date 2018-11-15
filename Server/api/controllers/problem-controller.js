@@ -5,7 +5,7 @@ const mongoose = require('mongoose'),
 exports.getAll = function(req, res) {
   Problem.find({}, function(err, problems) {
     if (err) {
-      res.send({error: err});
+      res.send({ error: err });
     } else {
       res.json({ problems });
     }
@@ -16,7 +16,7 @@ exports.addProblem = function(req, res) {
   var new_problem = new Problem(req.body);
   new_problem.save(function(err, problem) {
     if (err) {
-      res.send({error: err});
+      res.send({ error: err });
     } else {
       Assignment.findByIdAndUpdate(
         req.params.assignment_id,

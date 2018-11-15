@@ -18,6 +18,10 @@ let ProblemSchema = new Schema({
   content: {
     type: String,
     default: ""
+  },
+  tests: {
+    type: [Schema.Types.ObjectId],
+    default: []
   }
 });
 

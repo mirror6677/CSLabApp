@@ -15,6 +15,10 @@ require('./api/models/assignment-model');
 require('./api/models/problem-model');
 require('./api/models/user-model');
 require('./api/models/work-model');
+require('./api/models/test-model');
+require('./api/models/filename-test-model');
+require('./api/models/pylint-test-model');
+require('./api/models/blackbox-test-model');
 
 /*
 // For clearing all content

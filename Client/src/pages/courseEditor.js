@@ -145,7 +145,9 @@ class CourseEditor extends React.PureComponent {
             />
           </TabPane>
           <TabPane tab={<span><Icon type='file-search' />Tests</span>} key='2' disabled={selectedProblem === undefined}>
-            Tab 2
+            <Button type='dashed' block className={styles.new_test_btn}>
+              <Icon type='plus' /> Add test
+            </Button>
           </TabPane>
         </Tabs>
         <NewAssignmentModal 
