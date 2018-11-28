@@ -18,7 +18,7 @@ class RosterModal extends React.PureComponent {
 
   componentDidMount() {
     const { students, TAs, professors } = this.props.course
-    const objectIds = professors.concat(TAs.concat(students))
+    const objectIds = [...professors, ...TAs, ...students]
     var roleDict = {}
     students.forEach(id => {
       roleDict[id] = 'Student'

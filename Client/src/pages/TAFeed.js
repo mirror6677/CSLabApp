@@ -35,7 +35,7 @@ class TAFeed extends React.PureComponent {
       if (!workDict[problemId]) {
         workDict[problemId] = [workId]
       } else {
-        workDict[problemId] = workDict[problemId].concat([workId])
+        workDict[problemId] = [...workDict[problemId], workId]
       }
     })
     this.workDict = workDict

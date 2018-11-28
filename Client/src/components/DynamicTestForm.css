@@ -1,0 +1,21 @@
+.new_test_btn {
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.delete_btn {
+  cursor: pointer;
+  position: relative;
+  top: 4px;
+  font-size: 24px;
+  color: #999;
+  transition: all .3s;
+}
+.delete_btn:hover {
+  color: #777;
+}
+
+.form_item {
+  width: 80% !important;
+  margin-right: 20px;
+}

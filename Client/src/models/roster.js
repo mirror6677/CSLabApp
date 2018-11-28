@@ -32,7 +32,7 @@ export default {
     *updateCourseRoster({ payload }, { call, put }) {
       const { professors, TAs, students, course } = payload
       var userDict = {}
-      const users = professors.concat(TAs.concat(students))
+      const users = [...professors, ...TAs, ...students]
       for (var i = 0; i < users.length; i++) {
         const username = users[i]
         const data = yield call(getUserByUsername, username)

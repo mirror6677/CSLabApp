@@ -14,7 +14,7 @@ export default {
         const data = yield call(getAssignment, payload[i])
         if (data.data) {
           res[data.data.assignment._id] = data.data.assignment
-          problem_ids = problem_ids.concat(data.data.assignment.problems)
+          problem_ids = [...problem_ids, ...data.data.assignment.problems]
         }
       }
       yield put({

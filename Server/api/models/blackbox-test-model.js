@@ -7,9 +7,9 @@ let BlackboxTestSchema = new Schema({
     type: String,
     required: 'Please enter the command you want to run'
   },
-  expected_output: {
-    type: String,
-    default: ""
+  solution_included: {
+    type: Boolean,
+    default: false
   }
 });
 
