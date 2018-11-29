@@ -3,8 +3,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 let PylintTestSchema = new Schema({
-  filename: {
-    type: String,
+  filenames: {
+    type: [String],
     required: 'Please enter the filename of the pylint test'
   },
   flags: {

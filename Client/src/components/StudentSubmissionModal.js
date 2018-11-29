@@ -36,21 +36,21 @@ class StudentSubmissionModal extends React.PureComponent {
       onChange: info => {
         const { status, name } = info.file
         if (status === 'done') {
-          message.success(`${info.file.name} file uploaded successfully.`)
+          message.success(`${name} file uploaded successfully.`)
           this.props.dispatch({
             type: 'files/fileUploaded',
             payload: {
               workId: workId,
-              filename: info.file.name
+              filename: name
             }
           })
         } else if (status === 'error') {
-          message.error(`${info.file.name} file upload failed.`)
+          message.error(`${name} file upload failed.`)
         } else if (status === 'removed') {
           this.props.dispatch({
             type: 'files/removeFile',
             payload: {
-              workId: workId,
+              workId,
               filename: name
             }
           })

@@ -9,16 +9,6 @@ const FILENAME_TYPE = 'filename',
       PYLINT_TYPE = 'pylint',
       BLACKBOX_TYPE = 'blackbox';
 
-exports.getAll = function(req, res) {
-  Test.find({}, function(err, tests) {
-    if (err) {
-      res.send({ error: err });
-    } else {
-      res.json({ tests });
-    }
-  });
-};
-
 exports.addTest = function(req, res) {
   const data = req.body;
   var new_test_content;
@@ -49,7 +39,7 @@ exports.addTest = function(req, res) {
               if (err) {
                 res.send({ error: err });
               } else {
-                res.json({ problem, test, test_content })
+                res.json({ problem, test: { ...test, content: test_content } })
               }
             }
           );
@@ -69,7 +59,7 @@ exports.getTest = function(req, res) {
           if (err) {
             res.send({ error: err });
           } else {
-            res.json({ test, test_content });
+            res.json({ test: { ...test, content: test_content } });
           }
         });
       } else if (test.type === PYLINT_TYPE) {
@@ -77,7 +67,7 @@ exports.getTest = function(req, res) {
           if (err) {
             res.send({ error: err });
           } else {
-            res.json({ test, test_content });
+            res.json({ test: { ...test, content: test_content } });
           }
         });
       } else if (test.type === BLACKBOX_TYPE) {
@@ -85,7 +75,7 @@ exports.getTest = function(req, res) {
           if (err) {
             res.send({ error: err });
           } else {
-            res.json({ test, test_content });
+            res.json({ test: { ...test, content: test_content } });
           }
         });
       } else {
@@ -100,7 +90,33 @@ exports.updateTest = function(req, res) {
     if (err) {
       res.send({ error: err });
     } else {
-      res.json({ test });
+      if (test.type === FILENAME_TYPE) {
+        FilenameTest.findById(test.content, function(err, test_content) {
+          if (err) {
+            res.send({ error: err });
+          } else {
+            res.json({ test: { ...test, content: test_content } });
+          }
+        });
+      } else if (test.type === PYLINT_TYPE) {
+        PylintTest.findById(test.content, function(err, test_content) {
+          if (err) {
+            res.send({ error: err });
+          } else {
+            res.json({ test: { ...test, content: test_content } });
+          }
+        });
+      } else if (test.type === BLACKBOX_TYPE) {
+        BlackboxTest.findById(test.content, function(err, test_content) {
+          if (err) {
+            res.send({ error: err });
+          } else {
+            res.json({ test: { ...test, content: test_content } });
+          }
+        });
+      } else {
+        res.send({ error: 'Unknown test type' })
+      }
     }
   });
 };
@@ -135,22 +151,66 @@ exports.deleteTest = function(req, res) {
           if (err) {
             res.send({ error: err });
           } else {
-            FilenameTest.remove(
-              { '_id': { $in: test.content.map(id => mongoose.Types.ObjectId(id)) } },
-              function(err) {
-                if (err) {
+            if (test.type === FILENAME_TYPE) {
+              FilenameTest.remove(
+                { '_id': { $in: test.content.map(id => mongoose.Types.ObjectId(id)) } },
+                function(err) {
+                  if (err) {
+                    res.send({ error: err });
+                  } else {
+                    test.remove(function(err) {
+                      if(err) {
+                        res.send({ error: err });
+                      } else {
+                        res.json({ problem, test });
+                      }
+                    });
+                  }
+                }
+              );
+            } else if (test.type === PYLINT_TYPE) {
+              PylintTest.remove(
+                { '_id': { $in: test.content.map(id => mongoose.Types.ObjectId(id)) } },
+                function(err) {
+                  if (err) {
+                    res.send({ error: err });
+                  } else {
+                    test.remove(function(err) {
+                      if(err) {
+                        res.send({ error: err });
+                      } else {
+                        res.json({ problem, test });
+                      }
+                    });
+                  }
+                }
+              );
+            } else if (test.type === BLACKBOX_TYPE) {
+              BlackboxTest.remove(
+                { '_id': { $in: test.content.map(id => mongoose.Types.ObjectId(id)) } },
+                function(err) {
+                  if (err) {
+                    res.send({ error: err });
+                  } else {
+                    test.remove(function(err) {
+                      if(err) {
+                        res.send({ error: err });
+                      } else {
+                        res.json({ problem, test });
+                      }
+                    });
+                  }
+                }
+              );
+            } else {
+              test.remove(function(err) {
+                if(err) {
                   res.send({ error: err });
                 } else {
-                  test.remove(function(err) {
-                    if(err) {
-                      res.send({ error: err });
-                    } else {
-                      res.json({ problem, test });
-                    }
-                  });
+                  res.json({ problem, test });
                 }
-              }
-            );
+              });
+            }
           }
         }
       );

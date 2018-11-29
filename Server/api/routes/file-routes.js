@@ -12,14 +12,9 @@ var credentials = new AWS.SharedIniFileCredentials({ profile: 'labapp' })
 AWS.config.credentials = credentials
 const s3 = new AWS.S3()
 
-// specify your bucket name here
 const bucket = 'labapp-uploads'
 
-// this generates the key (filename) from the originalname
-// keys have to be unique, so in the future pass in username and
-// use path-like names like username+'/'+originalname
-// upload of a duplicate keys will overwrite the old contents
-var upload = multer({
+const upload = multer({
   storage: multerS3({
     s3: s3,
     bucket: bucket,
@@ -30,7 +25,7 @@ var upload = multer({
       cb(null, `${req.params.work_id}/${file.originalname}`)
     }
   })
- })
+})
 
 module.exports = function(app) {
   app.get('/files', (_, res) => {
@@ -58,7 +53,6 @@ module.exports = function(app) {
   })
 
   app.get('/files/:work_id/:filename', (req, res) => {
-    console.log(req.params)
     const { work_id, filename } = req.params
     const params = {
       Bucket: bucket,
@@ -90,7 +84,7 @@ module.exports = function(app) {
     )
   })
 
-  app.post('/files/upload/:work_id', upload.single('file'), (req, res) => {
+  app.post('/files/upload/:work_id', upload.single('file'), (_, res) => {
     res.json({ result: 'ok' })
   })
 

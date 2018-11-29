@@ -94,10 +94,6 @@ class CourseEditor extends React.PureComponent {
     this.setState({ editorState })
   }
 
-  newTest = () => {
-    
-  }
-
   render () {
     const { editorState, selectedAssignment, selectedProblem, showNewAssignmentModal, showNewProblemModal } = this.state
     const { course, assignments, problems } = this.props
@@ -146,7 +142,7 @@ class CourseEditor extends React.PureComponent {
             />
           </TabPane>
           <TabPane tab={<span><Icon type='file-search' />Tests</span>} key='2' disabled={selectedProblem === undefined}>
-            <DynamicTestForm />
+            { selectedProblem !== undefined && <DynamicTestForm problemId={selectedProblem} /> }
           </TabPane>
         </Tabs>
         <NewAssignmentModal 

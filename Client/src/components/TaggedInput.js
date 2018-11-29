@@ -1,16 +1,16 @@
 import React from 'react'
 import { Tag, Input, Tooltip, Icon } from 'antd'
 
-export default class FilenameTestInput extends React.Component {
+export default class TaggedInput extends React.PureComponent {
   state = {
     inputVisible: false,
     inputValue: '',
   }
 
   handleClose = removedTag => {
-    const { content, onUpdate } = this.props
-    const filenames = content.filenames.filter(tag => tag !== removedTag)
-    onUpdate({ ...content, filenames })
+    const { data, onUpdate } = this.props
+    const newData = data.filter(tag => tag !== removedTag)
+    onUpdate(newData)
   }
 
   showInput = () => {
@@ -23,27 +23,28 @@ export default class FilenameTestInput extends React.Component {
 
   handleInputConfirm = () => {
     const { inputValue } = this.state
-    const { content, onUpdate } = this.props
-    const filenames = inputValue && content.filenames.indexOf(inputValue) === -1 ? [...content.filenames, inputValue] : content.filenames
+    const { data, onUpdate } = this.props
+    const newData = inputValue && data.indexOf(inputValue) === -1 ? [...data, inputValue] : data
     this.setState({
       inputVisible: false,
       inputValue: '',
     })
-    onUpdate({ ...content, filenames })
+    onUpdate(newData)
   }
 
   saveInputRef = input => this.input = input
 
   render() {
     const { inputVisible, inputValue } = this.state
-    const filenames = this.props.content.filenames
+    const { data, prompt } = this.props
+
     return (
       <div>
-        {filenames.map((tag, index) => {
-          const isLongTag = tag.length > 20
+        {data.map(tag => {
+          const isLongTag = tag.length > 30
           const tagElem = (
             <Tag key={tag} closable={true} afterClose={() => this.handleClose(tag)}>
-              {isLongTag ? `${tag.slice(0, 20)}...` : tag}
+              {isLongTag ? `${tag.slice(0, 30)}...` : tag}
             </Tag>
           )
           return isLongTag ? <Tooltip title={tag} key={tag}>{tagElem}</Tooltip> : tagElem
@@ -65,7 +66,7 @@ export default class FilenameTestInput extends React.Component {
             onClick={this.showInput}
             style={{ background: '#fff', borderStyle: 'dashed' }}
           >
-            <Icon type='plus' /> Filename
+            <Icon type='plus' /> {prompt}
           </Tag>
         )}
       </div>
