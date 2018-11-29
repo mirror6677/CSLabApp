@@ -83,7 +83,6 @@ export default class DynamicTestForm extends React.PureComponent {
 
   render() {
     const { tests } = this.state
-    const { problemId } = this.props
 
     const formItemLayout = {
       labelCol: {

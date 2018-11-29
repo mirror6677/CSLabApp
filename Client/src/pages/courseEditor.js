@@ -142,7 +142,7 @@ class CourseEditor extends React.PureComponent {
             />
           </TabPane>
           <TabPane tab={<span><Icon type='file-search' />Tests</span>} key='2' disabled={selectedProblem === undefined}>
-            { selectedProblem !== undefined && <DynamicTestForm problemId={selectedProblem} /> }
+            { selectedProblem !== undefined && <DynamicTestForm /> }
           </TabPane>
         </Tabs>
         <NewAssignmentModal 
