@@ -13,3 +13,13 @@ export const addTestResult = testResult => {
     body: JSON.stringify(testResult)
   })
 }
+
+export const updateTestResult = testResult => {
+  var headers = new Headers()
+  headers.append("Content-Type", "application/json")
+  return request(`/test_results/${testResult._id}`, {
+    headers,
+    method: 'put',
+    body: JSON.stringify(testResult)
+  })
+}

@@ -1,4 +1,4 @@
-import { getTestResult, addTestResult } from '../services/testResults'
+import { getTestResult, addTestResult, updateTestResult } from '../services/testResults'
 
 export default {
   namespace: 'testResults',
@@ -22,6 +22,21 @@ export default {
 
     *addTestResult({ payload }, { call, put }) {
       const data = yield call(addTestResult, payload.data)
+      if (data.data) {
+        var res = {}
+        res[data.data.test_result._id] = data.data.test_result
+        yield put({
+          type: 'testResultAdded',
+          payload: res
+        })
+        payload.callback && payload.callback({ data: data.data.test_result._id })
+      } else {
+        payload.callback && payload.callback({ err: data.err })
+      }
+    },
+
+    *updateTestResult({ payload }, { call, put }) {
+      const data = yield call(updateTestResult, payload.data)
       if (data.data) {
         var res = {}
         res[data.data.test_result._id] = data.data.test_result
