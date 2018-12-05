@@ -5,3 +5,6 @@
 
 # private credentials
 /credentials
+
+# temporary server storage
+/temp

@@ -201,7 +201,7 @@ class StudentFeed extends React.PureComponent {
   }
   
   render() {
-    const { problems, assignments } = this.props
+    const { problems, assignments, works } = this.props
     const { showSubmissionModal, submissionLoading, currWorkId } = this.state
     const sortedAssignments = Object.keys(assignments).sort((a, b) => assignments[a].week_offset - assignments[b].week_offset)
 
@@ -231,6 +231,7 @@ class StudentFeed extends React.PureComponent {
             visible={showSubmissionModal} 
             loading={submissionLoading}
             workId={currWorkId} 
+            problemId={works[currWorkId].problem}
             onSubmit={this.onSubmit} 
             onClose={this.onClose} 
           /> }

@@ -10,17 +10,23 @@ export default {
     *getAll({ payload }, { call, put }) {
       const data = yield call(getAll, payload)
       if (data.data) {
-        const payload = data.data.works.reduce((result, item) => {
-          result[item._id] = item
-          return result
-        }, {})
+        var result = {}
+        var testResults = []
+        data.data.works.forEach(work => {
+          result[work._id] = work
+          testResults = [...testResults, ...work.test_results]
+        })
         yield put({
           type: 'worksReceived',
-          payload
+          payload: result
         })
         yield put({
           type: 'files/getAll',
-          payload: Object.keys(payload)
+          payload: Object.keys(result)
+        })
+        yield put({
+          type: 'testResults/getAll',
+          payload: testResults
         })
       }
     },

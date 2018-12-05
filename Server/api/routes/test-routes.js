@@ -107,4 +107,9 @@ module.exports = function(app) {
       }
     )
   })
+
+  // Running Pylint tests on the server
+  app.get('/pylint/:test_id/:work_id', (req, res) => {
+    
+  })
 }

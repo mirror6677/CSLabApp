@@ -19,6 +19,10 @@ let WorkSchema = new Schema({
     type: Date,
     required: 'Please enter the last modified time of this work'
   },
+  test_results: {
+    type: [Schema.Types.ObjectId],
+    default: []
+  },
   grade: {
     type: Number,
     default: 0

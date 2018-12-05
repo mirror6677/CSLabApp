@@ -8,6 +8,7 @@ module.exports = function(app) {
   var work_routes = require('./work-routes');
   var test_routes = require('./test-routes');
   var file_routes = require('./file-routes');
+  var test_result_routes = require('./test-result-routes')
 
   auth_routes(app);
   course_routes(app);
@@ -17,4 +18,5 @@ module.exports = function(app) {
   work_routes(app);
   test_routes(app);
   file_routes(app);
+  test_result_routes(app);
 };

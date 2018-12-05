@@ -1,14 +1,17 @@
 import React from 'react'
 import { connect } from 'dva'
-import { Button, Icon, Modal, Upload, message } from 'antd'
+import { Button, Icon, Modal, Steps, Upload, message } from 'antd'
+import styles from './StudentSubmissionModal.css'
 import { API_ROOT } from '../constants/routes'
 
 const Dragger = Upload.Dragger
+const Step = Steps.Step
 
 class StudentSubmissionModal extends React.PureComponent {
 
   state = {
-    fileList: []
+    fileList: [],
+    currTest: 0
   }
 
   componentDidMount() {
@@ -27,7 +30,9 @@ class StudentSubmissionModal extends React.PureComponent {
   }
 
   render() {
-    const { visible, loading, workId, onSubmit, onClose } = this.props
+    const { visible, loading, workId, problemId, onSubmit, onClose, problems, tests } = this.props
+    const { fileList, currTest } = this.state
+    const problem = problems[problemId]
 
     const draggerProps = {
       name: 'file',
@@ -63,13 +68,14 @@ class StudentSubmissionModal extends React.PureComponent {
         })
         this.setState({ fileList })
       },
-      fileList: this.state.fileList
+      fileList: fileList
     }
 
     return (
       <Modal
         title={'Edit submission'}
         visible={visible}
+        width={'85%'}
         onOk={onSubmit}
         onCancel={onClose}
         maskClosable={false}
@@ -78,21 +84,43 @@ class StudentSubmissionModal extends React.PureComponent {
           <Button key='submit' type='primary' loading={loading} onClick={onSubmit}>Submit</Button>
         ]}
       >
-        <Dragger {...draggerProps}>
-          <p className='ant-upload-drag-icon'>
-            <Icon type='inbox' />
-          </p>
-          <p className='ant-upload-text'>Click or drag files to this area to upload</p>
-          <p className='ant-upload-hint'>By uploading your files here, you acknowledge that they reflect your original work and all references are properly cited</p>
-        </Dragger>
+        <div className={styles.container}>
+          <div className={styles.left_container}>
+            <Dragger {...draggerProps}>
+              <p className='ant-upload-drag-icon'>
+                <Icon type='inbox' />
+              </p>
+              <p className='ant-upload-text'>Click or drag files to this area to upload</p>
+              <p className='ant-upload-hint'>By uploading your files here, you acknowledge that they reflect your original work and all references are properly cited</p>
+            </Dragger>
+          </div>
+          <div className={styles.right_container}>
+            <p className={styles.test_header}>Automated Tests:</p>
+            <Steps 
+              direction='vertical' 
+              size={problem.tests.length > 3 ? 'small' : 'default'} 
+              current={currTest}
+            >
+              { problem.tests.map((testId, index) => (
+                <Step 
+                  key={index}
+                  title={index < currTest ? 'Passed' : (index > currTest ? 'Waiting' : 'In Progress')} 
+                  description={tests[testId].name} 
+                />
+              )) }
+            </Steps>
+          </div>
+        </div>                
       </Modal>
     )
   }
 }
 
-export default connect(({ files }) => ({
+export default connect(({ problems, files, tests }) => ({
+  problems,
   files: Object.keys(files).reduce((result, item) => {
     result[item] = Object.keys(files[item])
     return result
-  }, {})
+  }, {}),
+  tests: tests.tests
 }))(StudentSubmissionModal)
