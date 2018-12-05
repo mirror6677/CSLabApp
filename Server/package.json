@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Hello world\"",
-    "start": "nodemon server.js"
+    "start": "PORT=4007 ./node_modules/nodemon/bin/nodemon.js server.js"
   },
   "author": "Jingya Wu",
   "devDependencies": {
@@ -24,8 +24,6 @@
     "multer": "^1.4.1",
     "multer-s3": "^2.7.0",
     "npm": "^6.4.0",
-    "passport": "^0.4.0",
-    "passport-google-oauth": "^1.0.0",
     "shelljs": "^0.8.3"
   }
 }

@@ -33,8 +33,8 @@ Course.remove({}, function(err) {
   console.log('course removed')
 });
 
-User.remove({}, function(err) { 
-  console.log('user removed') 
+User.remove({}, function(err) {
+  console.log('user removed')
   var admin = new User({
     username: 'jw057',
     admin: true
@@ -63,8 +63,8 @@ Problem.remove({}, function(err) {
   console.log('problem removed')
 });
 
-Work.remove({}, function(err) { 
-  console.log('work removed') 
+Work.remove({}, function(err) {
+  console.log('work removed')
 });
 */
 
@@ -88,7 +88,7 @@ store.on('error', function(error) {
 });
 
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Origin", "http://www.eg.bucknell.edu:"+port);
   res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE")
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");

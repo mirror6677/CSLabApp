@@ -1,4 +1,13 @@
-const ROOT = 'http://localhost:8000'
+///const ROOT = 'http://localhost:8000'
+//https://stackoverflow.com/questions/35469836/detecting-production-vs-development-react-at-runtime
+
+let ROOT;
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    ROOT = 'http://localhost:8000'
+} else {
+    // production code
+    ROOT = 'http://www.eg.bucknell.edu:4007'
+}
 
 function parseJSON(response) {
   return response.json();
