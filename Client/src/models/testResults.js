@@ -29,7 +29,7 @@ export default {
           type: 'testResultAdded',
           payload: res
         })
-        payload.callback && payload.callback({ data: data.data.test_result._id})
+        payload.callback && payload.callback({ data: data.data.test_result._id })
       } else {
         payload.callback && payload.callback({ err: data.err })
       }
