@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'dva'
-import { Button, Icon, Modal, Steps, Upload, message } from 'antd'
+import { Button, Icon, Modal, Steps, Tooltip, Upload, message } from 'antd'
 import styles from './StudentSubmissionModal.css'
 import { API_ROOT } from '../constants/routes'
 import TEST_CATEGORIES from '../constants/test_categories'
@@ -34,6 +34,7 @@ class StudentSubmissionModal extends React.PureComponent {
     const test = tests[testId]
     const testResult = testResults[works[workId].test_results[index]]
     const title = testResult ? testResult.status : 'Waiting'
+    const content = testResult ? testResult.content : ''
     var status
     if (title === 'Waiting') {
       status = 'wait'
@@ -47,7 +48,7 @@ class StudentSubmissionModal extends React.PureComponent {
     return (
       <Step 
         key={index}
-        title={title} 
+        title={<Tooltip title={content}>{title}</Tooltip>} 
         description={test.name} 
         status={status}
       />
@@ -86,24 +87,75 @@ class StudentSubmissionModal extends React.PureComponent {
               payload: {
                 data: {
                   ...testResults[works[workId].test_results[index]],
-                  status: 'Passed'
+                  status: 'Passed',
+                  content: 'Filename test passed'
                 }
               }
             })
           }
+          this.runPylintTest()
         } else if (works[workId].test_results[index] && testResults[works[workId].test_results[index]].status === 'Passed') {
           this.props.dispatch({
             type: 'testResults/updateTestResult',
             payload: {
               data: {
                 ...testResults[works[workId].test_results[index]],
-                status: 'Failed'
+                status: 'Failed',
+                content: 'Filename test failed'
               }
             }
           })
         }
       }
     })
+  }
+
+  runPylintTest = () => {
+    const { problems, problemId, tests, workId } = this.props
+    const testIds = problems[problemId].tests
+    console.log(testIds)
+    testIds.forEach((testId, index) => {
+      if (tests[testId].category === TEST_CATEGORIES.PYLINT) {
+        this.props.dispatch({
+          type: 'tests/runPylint',
+          payload: {
+            testId: tests[testId].content._id,
+            workId,
+            callback: this.onPylintTestFinished(testId, index)
+          }
+        })
+      }
+    })
+  }
+
+  onPylintTestFinished = (testId, index) => {
+    return data => {
+      const { works, workId, testResults } = this.props
+      if (!works[workId].test_results[index]) {
+        this.props.dispatch({
+          type: 'testResults/addTestResult',
+          payload: {
+            data: {
+              test_id: testId,
+              status: data.err ? 'Failed' : 'Passed',
+              content: data.err ? data.err : data.data
+            },
+            callback: this.onNewTestResultCreated(index)
+          }
+        })
+      } else {
+        this.props.dispatch({
+          type: 'testResults/updateTestResult',
+          payload: {
+            data: {
+              ...testResults[works[workId].test_results[index]],
+              status: data.err ? 'Failed' : 'Passed',
+              content: data.err ? data.err : data.data
+            }
+          }
+        })
+      }
+    }
   }
 
   onNewTestResultCreated = index => {

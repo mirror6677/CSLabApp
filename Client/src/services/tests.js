@@ -37,3 +37,7 @@ export const getFiles = testId => {
 export const getSolutionFiles = testId => {
   return request(`/testfiles/solution/${testId}`)
 }
+
+export const runPylint = (testId, workId) => {
+  return request(`/pylint/${testId}/${workId}`)
+}

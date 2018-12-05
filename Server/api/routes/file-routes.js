@@ -19,7 +19,11 @@ const upload = multer({
     s3: s3,
     bucket: bucket,
     contentType: (req, file, cb) => {
-      cb(null, file.mimetype)
+      if (file.originalname.endsWith('.py')) {
+        cb(null, 'text/x-python')
+      } else {
+        cb(null, file.mimetype)
+      }
     },
     key: (req, file, cb) => {
       cb(null, `${req.params.work_id}/${file.originalname}`)

@@ -3,6 +3,12 @@
 const AWS = require('aws-sdk')
 const multer = require('multer')
 const multerS3 = require('multer-s3')
+const fs = require('fs')
+const fse = require('fs-extra')
+const shell = require('shelljs')
+
+const mongoose = require('mongoose'),
+      PylintTest = mongoose.model('pylint_test')
 
 var credentials = new AWS.SharedIniFileCredentials({ profile: 'labapp' })
 AWS.config.credentials = credentials
@@ -110,6 +116,37 @@ module.exports = function(app) {
 
   // Running Pylint tests on the server
   app.get('/pylint/:test_id/:work_id', (req, res) => {
-    
+    const { test_id, work_id } = req.params
+    const params = {
+      Bucket: bucket,
+      Prefix: `${work_id}`
+    }
+    s3.listObjectsV2(params, (err, data) => {
+      if (err) {
+        res.send({ error: err })
+      } else {
+        fse.ensureDirSync(`temp/${work_id}`)
+        data.Contents.forEach(file => {
+          const key = file.Key
+          var file = fs.createWriteStream(`temp/${key}`)
+          s3.getObject({ Bucket: bucket, Key: key }).createReadStream().pipe(file)
+        })
+        PylintTest.findById(test_id).lean().exec(function(err, test) {
+          if (err) {
+            res.send({ error: err })
+          } else {
+            const { flags, filenames } = test
+            const command = `pylint ${filenames.map(filename => `temp/${work_id}/${filename}`).join(' ')} ${flags.map(flag => `--${flag}`).join(' ')}`
+            shell.exec(command, function(code, stdout, stderr) {
+              if (code != 0) {
+                res.send({ error: stderr, output: stdout })
+              } else {
+                res.json({ output: stdout })
+              }
+            });
+          }
+        })
+      }
+    })
   })
 }

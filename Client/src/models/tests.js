@@ -1,4 +1,4 @@
-import { getTest, addTest, updateTest, getFiles, getSolutionFiles } from '../services/tests'
+import { getTest, addTest, updateTest, getFiles, getSolutionFiles, runPylint } from '../services/tests'
 import TEST_CATEGORIES from '../constants/test_categories'
 
 export default {
@@ -98,6 +98,19 @@ export default {
 
     *removeFile({ payload }, { call, put }) {
       //TODO: ability to remove file from server storage or s3
+    },
+
+    *runPylint({ payload }, { call, put }) {
+      const { testId, workId, callback } = payload
+      console.log(testId)
+      const data = yield call(runPylint, testId, workId)
+      if (data.data) {
+        if (data.data.error) {
+          callback && callback({ err: data.data.output })
+        } else {
+          callback && callback({ data: data.data.output })
+        }
+      }
     }
   },
 
