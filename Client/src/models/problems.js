@@ -9,15 +9,21 @@ export default {
   effects: {
     *getAll({ payload }, { call, put }) {
       var res = {}
+      var test_ids = []
       for (var i = 0; i < payload.length; i++) {
         const data = yield call(getProblem, payload[i])
         if (data.data) {
           res[data.data.problem._id] = data.data.problem
+          test_ids = [...test_ids, ...data.data.problem.tests]
         }
       }
       yield put({
         type: 'problemsReceived',
         payload: res
+      })
+      yield put({
+        type: 'tests/getAll',
+        payload: test_ids
       })
     },
     

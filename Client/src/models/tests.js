@@ -1,4 +1,5 @@
-import { getTest, getFiles, getSolutionFiles } from '../services/tests'
+import { getTest, addTest, updateTest, getFiles, getSolutionFiles } from '../services/tests'
+import TEST_CATEGORIES from '../constants/test_categories'
 
 export default {
 
@@ -16,20 +17,51 @@ export default {
       for (var i = 0; i < payload.length; i++) {
         const data = yield call(getTest, payload[i])
         if (data.data) {
-          result[payload[i]] = data.data.files.reduce((result, item) => {
-            result[item._id] = item
-            return result
-          }, {})
+          result[payload[i]] = data.data.test
         }
       }
       yield put({
         type: 'testsReceived',
         payload: result
       })
+      const testIds = Object.keys(result)
+      for (i = 0; i < testIds.length; i++) {
+        if (result[testIds[i]].category === TEST_CATEGORIES.BLACKBOX) {
+          yield put({
+            type: 'getFiles',
+            payload: testIds[i]
+          })
+          yield put({
+            type: 'getSolutionFiles',
+            payload: testIds[i]
+          })
+        }
+      }
     },
 
     *getTest({ payload }, { call, put }) {
       const data = yield call(getTest, payload)
+      if (data.data) {
+        yield put({
+          type: 'testReceived',
+          payload: data.data.test
+        })
+      }
+    },
+
+    *addTest({ payload }, { call, put }) {
+      const data = yield call(addTest, payload.test)
+      if (data.data) {
+        yield put({
+          type: 'testReceived',
+          payload: data.data.test
+        })
+        payload.callback && payload.callback(data.data.test)
+      }
+    },
+
+    *updateTest({ payload }, { call, put }) {
+      const data = yield call(updateTest, payload.test)
       if (data.data) {
         yield put({
           type: 'testReceived',
@@ -43,7 +75,10 @@ export default {
       if (data.data) {
         yield put({
           type: 'filesReceived',
-          payload: { files: data.data.files, testId: payload }
+          payload: { 
+            files: data.data.files.map(file => file.Key.split('/', 3)[2]), 
+            testId: payload 
+          }
         })
       }
     },
@@ -53,7 +88,10 @@ export default {
       if (data.data) {
         yield put({
           type: 'solutionFilesReceived',
-          payload: { solutionFiles: data.data.files, testId: payload }
+          payload: { 
+            solutionFiles: data.data.files.map(file => file.Key.split('/', 3)[2]), 
+            testId: payload
+          }
         })
       }
     },
@@ -65,7 +103,7 @@ export default {
 
   reducers: {
     testsReceived(state, action) {
-      return { ...state, tests: action.payload }
+      return { tests: action.payload, files: {}, solutionFiles: {} }
     },
 
     testReceived(state, action) {

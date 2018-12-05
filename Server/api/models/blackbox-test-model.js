@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 let BlackboxTestSchema = new Schema({
   command: {
     type: String,
-    required: 'Please enter the command you want to run'
+    default: ''
   },
   solution_included: {
     type: Boolean,

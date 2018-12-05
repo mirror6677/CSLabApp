@@ -1,12 +1,13 @@
 import React from 'react'
 import { connect } from 'dva'
-import { Button, Icon, Select, Tabs } from 'antd'
+import { Button, Icon, Select, Tabs, message } from 'antd'
 import styles from './courseEditor.css'
 import BraftEditor, { EditorState } from 'braft-editor'
 import 'braft-editor/dist/index.css'
 import NewAssignmentModal from '../components/NewAssignmentModal'
 import NewProblemModal from '../components/NewProblemModal'
 import DynamicTestForm from '../components/DynamicTestForm'
+import TEST_CATEGORIES from '../constants/test_categories'
 
 const Option = Select.Option
 const TabPane = Tabs.TabPane
@@ -15,6 +16,7 @@ class CourseEditor extends React.PureComponent {
   
   state = {
     editorState: null,
+    tests: [],
     selectedAssignment: undefined,
     selectedProblem: undefined,
     showNewAssignmentModal: false,
@@ -28,18 +30,21 @@ class CourseEditor extends React.PureComponent {
       this.setState({
         selectedAssignment: value,
         selectedProblem: undefined,
-        editorState: null
+        editorState: null,
+        tests: []
       })
     }
   }
 
   handleProblemChange = value => {
+    const { problems, tests } = this.props
     if (value === '_new') {
       this.setState({ showNewProblemModal: true })
     } else {
       this.setState({ 
         selectedProblem: value,
-        editorState: EditorState.createFrom(this.props.problems[value].content)
+        editorState: EditorState.createFrom(problems[value].content),
+        tests: problems[value].tests.map(testId => tests[testId])
       })
     }
   }
@@ -76,17 +81,57 @@ class CourseEditor extends React.PureComponent {
     })
   }
 
+  validateTests = () => {
+    const { tests } = this.state
+    tests.forEach(test => {
+      const { category, content } = test
+      if (category === TEST_CATEGORIES.FILENAME) {
+        if (!content.filenames || content.filenames.length === 0) {
+          return 'Filename test error'
+        }
+      } else if (category === TEST_CATEGORIES.PYLINT) {
+        if (!content.filenames || content.filenames.length === 0) {
+          return 'Pylint test error'
+        }
+      } else if (category === TEST_CATEGORIES.BLACKBOX) {
+        if (!content.command || content.command.length === 0) {
+          return 'Blackbox test error'
+        }
+      } else {
+        return 'Test type error'
+      }
+    })
+    return null
+  }
+
   submitContent = () => {
-    const { selectedProblem } = this.state
+    const { selectedProblem, editorState, tests } = this.state
+    const error = this.validateTests()
+    if (error) {
+      message.error(error)
+      return
+    }
     if (selectedProblem) {
-      const content = this.state.editorState.toHTML()
+      tests.forEach(test => {
+        this.props.dispatch({
+          type: 'tests/updateTest',
+          payload: {
+            test
+          }
+        })
+      })
+      const content = editorState.toHTML()
       this.props.dispatch({
         type: 'problems/updateProblem',
         payload: {
           ...this.props.problems[selectedProblem],
-          content
+          content,
+          tests: tests.map(test => test._id)
         }
       })
+      message.success('Problem saved')
+    } else {
+      message.warning('No problem selected')
     }
   }
 
@@ -94,8 +139,12 @@ class CourseEditor extends React.PureComponent {
     this.setState({ editorState })
   }
 
+  handleTestUpdate = tests => {
+    this.setState({ tests })
+  }
+
   render () {
-    const { editorState, selectedAssignment, selectedProblem, showNewAssignmentModal, showNewProblemModal } = this.state
+    const { editorState, tests, selectedAssignment, selectedProblem, showNewAssignmentModal, showNewProblemModal } = this.state
     const { course, assignments, problems } = this.props
 
     return (
@@ -142,7 +191,7 @@ class CourseEditor extends React.PureComponent {
             />
           </TabPane>
           <TabPane tab={<span><Icon type='file-search' />Tests</span>} key='2' disabled={selectedProblem === undefined}>
-            { selectedProblem !== undefined && <DynamicTestForm /> }
+            { selectedProblem !== undefined && <DynamicTestForm tests={tests} onUpdate={this.handleTestUpdate} /> }
           </TabPane>
         </Tabs>
         <NewAssignmentModal 
@@ -157,12 +206,12 @@ class CourseEditor extends React.PureComponent {
         />
       </div>
     )
-
   }
 }
 
-export default connect(({ course, assignments, problems }) => ({
+export default connect(({ course, assignments, problems, tests }) => ({
   course,
   assignments,
-  problems
+  problems,
+  tests: tests.tests
 }))(CourseEditor)

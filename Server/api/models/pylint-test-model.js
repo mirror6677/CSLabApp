@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 let PylintTestSchema = new Schema({
   filenames: {
     type: [String],
-    required: 'Please enter the filename of the pylint test'
+    default: []
   },
   flags: {
     type: [String],

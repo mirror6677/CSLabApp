@@ -3,7 +3,6 @@
 const AWS = require('aws-sdk')
 const multer = require('multer')
 const multerS3 = require('multer-s3')
-const fse = require('fs-extra')
 
 var credentials = new AWS.SharedIniFileCredentials({ profile: 'labapp' })
 AWS.config.credentials = credentials
@@ -20,26 +19,10 @@ const upload = is_solution => multer({
     },
     key: (req, file, cb) => {
       if (is_solution) {
-        cb(null, `_tests/${req.params.test_id}/solution/${file.originalname}`)
+        cb(null, `_solutions/${req.params.test_id}/${file.originalname}`)
       } else {
         cb(null, `_tests/${req.params.test_id}/${file.originalname}`)
       }
-    }
-  })
-})
-
-const temp_upload = multer({
-  storage: multer.diskStorage({
-    destination: function (req, file, cb) {
-      const dir = `~/labapp_uploads/${req.params.directory}`
-      fse.ensureDir(dir).then(() => {
-        cb(null, dir)
-      }).catch(err => {
-        console.error(err)
-      })
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname)
     }
   })
 })
@@ -49,21 +32,16 @@ module.exports = function(app) {
 
   app.route('/tests/:test_id')
     .get(tests.getTest)
-    .post(tests.addTest)
     .put(tests.updateTest)
     .delete(tests.deleteTest);
 
-  app.route('/tests/:type/:test_content_id')
-    .put(tests.updateTestContent)
+  app.route('/tests')
+    .post(tests.addTest)
 
-  app.post('/testfiles/tempuploads/:directory', temp_upload.single('file'), (_, res) => {
-    res.json({ result: 'ok' })
-  })
-
-  app.get('testfiles/solution/:test_id', (req, res) => {
+  app.get('/testfiles/solution/:test_id', (req, res) => {
     const params = {
       Bucket: bucket,
-      Prefix: `_tests/${req.params.test_id}/solution`
+      Prefix: `_solutions/${req.params.test_id}`
     }
     s3.listObjectsV2(params, (err, data) => {
       if (err) {
@@ -74,11 +52,28 @@ module.exports = function(app) {
     })
   })
 
-  app.post('testfiles/solution/upload/:test_id', upload(true).single('file'), (_, res) => {
+  app.post('/testfiles/solution/upload/:test_id', upload(true).single('file'), (_, res) => {
     res.json({ result: 'ok' })
   })
 
-  app.get('testfiles/:test_id', (req, res) => {
+  app.get('/testfiles/solution/download/:test_id/:filename', (req, res) => {
+    const { test_id, filename } = req.params
+    s3.getSignedUrl(
+      'getObject', {
+        Bucket: bucket,
+        Key: `_solutions/${test_id}/${filename}`,
+        Expires: 120
+      }, (err, data) => {
+        if (err) {
+          res.send({ error: err })
+        } else {
+          res.redirect(data)
+        }
+      }
+    )
+  })
+
+  app.get('/testfiles/:test_id', (req, res) => {
     const params = {
       Bucket: bucket,
       Prefix: `_tests/${req.params.test_id}`
@@ -92,7 +87,24 @@ module.exports = function(app) {
     })
   })
 
-  app.post('testfiles/upload/:test_id', upload(false).single('file'), (_, res) => {
+  app.post('/testfiles/upload/:test_id', upload(false).single('file'), (_, res) => {
     res.json({ result: 'ok' })
+  })
+
+  app.get('/testfiles/download/:test_id/:filename', (req, res) => {
+    const { test_id, filename } = req.params
+    s3.getSignedUrl(
+      'getObject', {
+        Bucket: bucket,
+        Key: `_tests/${test_id}/${filename}`,
+        Expires: 120
+      }, (err, data) => {
+        if (err) {
+          res.send({ error: err })
+        } else {
+          res.redirect(data)
+        }
+      }
+    )
   })
 }
