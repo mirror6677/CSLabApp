@@ -4,6 +4,7 @@ import { Button, Collapse, Popconfirm, Tooltip,  message } from 'antd'
 import styles from './studentFeed.css'
 import moment from 'moment'
 import StudentSubmissionModal from '../components/StudentSubmissionModal'
+import StudentGradeModal from '../components/StudentGradeModal'
 
 const Panel = Collapse.Panel
 
@@ -12,6 +13,7 @@ class StudentFeed extends React.PureComponent {
   state = {
     showSubmissionModal: false,
     submissionLoading: false,
+    showGradeModal: false,
     currWorkId: null
   }
 
@@ -38,34 +40,48 @@ class StudentFeed extends React.PureComponent {
           <div>
             {problem.name}
             <div style={{ float: 'right', marginRight: '20px' }}>
-              <span>
-                {`${status} Due on ${moment(start_date).add({ days: problem.day_offset, weeks: this.props.assignments[assignment].week_offset }).format('MM/DD/YYYY')}`}
-              </span>
-              <Tooltip title='View/edit submission' placement='topRight'>
-                { work && works[work].submitted ?
-                  <Popconfirm
-                    placement='leftTop' 
-                    title={'This will unsubmit your work, do you wish to continue?'} 
-                    onConfirm={ e => this.unsubmitWork(e, work) } 
-                    onCancel={ e => e.stopPropagation() }
-                    okText='Yes' 
-                    cancelText='No'
-                  >
+              { status === 'Graded.' ? 
+                <Tooltip title={`${works[work].grade} out of ${problem.total_points}`}>
+                  <span>Graded. Hover to see grade.</span>
+                </Tooltip>: <span>
+                  {`${status} Due on ${moment(start_date).add({ days: problem.day_offset, weeks: this.props.assignments[assignment].week_offset }).format('MM/DD/YYYY')}`}
+                </span> 
+              }
+              { status === 'Graded.' ? 
+                <Tooltip title='View detail'>
+                  <Button 
+                    size='small' 
+                    icon='bars' 
+                    style={{ margin: 'auto', marginLeft: '20px' }}
+                    onClick={ e => this.onOpenGradeDialog(e, work) } 
+                  />
+                </Tooltip> : 
+                <Tooltip title='View/edit submission' placement='topRight'>
+                  { status === 'Submitted.' ?
+                    <Popconfirm
+                      placement='leftTop' 
+                      title={'This will unsubmit your work, do you wish to continue?'} 
+                      onConfirm={ e => this.unsubmitWork(e, work) } 
+                      onCancel={ e => e.stopPropagation() }
+                      okText='Yes' 
+                      cancelText='No'
+                    >
+                      <Button 
+                        size='small' 
+                        icon='form' 
+                        style={{ margin: 'auto', marginLeft: '20px' }}
+                        onClick={ e => this.onOpenSubmissionDialog(e, problem, work) } 
+                      />
+                    </Popconfirm> :
                     <Button 
                       size='small' 
                       icon='form' 
-                      style={{ margin: 'auto', marginLeft: '20px' }}
+                      style={{ margin: 'auto', marginLeft: '20px' }} 
                       onClick={ e => this.onOpenSubmissionDialog(e, problem, work) } 
                     />
-                  </Popconfirm> :
-                  <Button 
-                    size='small' 
-                    icon='form' 
-                    style={{ margin: 'auto', marginLeft: '20px' }} 
-                    onClick={ e => this.onOpenSubmissionDialog(e, problem, work) } 
-                  />
-                }
-              </Tooltip>
+                  }
+                </Tooltip> 
+              }
             </div>
           </div>
         } 
@@ -75,6 +91,17 @@ class StudentFeed extends React.PureComponent {
         <div dangerouslySetInnerHTML={{ __html: `${problem.content}` }} />
       </Panel>
     )
+  }
+
+  /**
+   * Set the state to reflect opened grade modal.
+   */
+  onOpenGradeDialog = (e, workId) => {
+    e.stopPropagation()
+    this.setState({
+      showGradeModal: true,
+      currWorkId: workId
+    })
   }
 
   /**
@@ -193,16 +220,27 @@ class StudentFeed extends React.PureComponent {
    * Set the state to reflect closed submission modal.
    * Passed as props to the StudentSubmissionModal sub-component.
    */
-  onClose = () => {
+  onCloseSubmissionModal = () => {
     this.setState({
       showSubmissionModal: false,
+      currWorkId: null
+    })
+  }
+
+  /**
+   * Set the state to reflect closed grade modal.
+   * Passed as props to the StudentGradeModal sub-component.
+   */
+  onCloseGradeModal = () => {
+    this.setState({
+      showGradeModal: false,
       currWorkId: null
     })
   }
   
   render() {
     const { problems, assignments, works } = this.props
-    const { showSubmissionModal, submissionLoading, currWorkId } = this.state
+    const { showSubmissionModal, submissionLoading, showGradeModal, currWorkId } = this.state
     const sortedAssignments = Object.keys(assignments).sort((a, b) => assignments[a].week_offset - assignments[b].week_offset)
 
     return (
@@ -233,7 +271,13 @@ class StudentFeed extends React.PureComponent {
             workId={currWorkId} 
             problemId={works[currWorkId].problem}
             onSubmit={this.onSubmit} 
-            onClose={this.onClose} 
+            onClose={this.onCloseSubmissionModal} 
+          /> }
+          { showGradeModal && <StudentGradeModal 
+            visible={showGradeModal}
+            work={works[currWorkId]}
+            totalPoints={problems[works[currWorkId].problem].total_points}
+            onClose={this.onCloseGradeModal}
           /> }
       </div>
     )

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Hello world\"",
-    "start": "PORT=4007 ./node_modules/nodemon/bin/nodemon.js server.js"
+    "start": "PORT=8000 ./node_modules/nodemon/bin/nodemon.js server.js"
   },
   "author": "Jingya Wu",
   "devDependencies": {
