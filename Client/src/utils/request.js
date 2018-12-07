@@ -1,6 +1,4 @@
-///const ROOT = 'http://localhost:8000'
 //https://stackoverflow.com/questions/35469836/detecting-production-vs-development-react-at-runtime
-
 let ROOT;
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     ROOT = 'http://localhost:8000'

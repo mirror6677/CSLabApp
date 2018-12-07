@@ -9,6 +9,7 @@ module.exports = function(app) {
   var test_routes = require('./test-routes');
   var file_routes = require('./file-routes');
   var test_result_routes = require('./test-result-routes')
+  var grades_routes = require('./grades-routes')
 
   auth_routes(app);
   course_routes(app);
@@ -19,4 +20,5 @@ module.exports = function(app) {
   test_routes(app);
   file_routes(app);
   test_result_routes(app);
+  grades_routes(app);
 };

@@ -1,0 +1,12 @@
+.container {
+  margin: 2%;
+}
+
+.select_container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.select {
+  width: 200px;
+}

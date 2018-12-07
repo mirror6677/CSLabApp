@@ -60,4 +60,4 @@ exports.deleteCourse = function(req, res) {
       res.json({ course });
     }
   });
-}
+};

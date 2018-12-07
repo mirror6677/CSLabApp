@@ -33,12 +33,6 @@ class Login extends React.PureComponent {
     this.props.dispatch({ type: 'user/handleLogin', payload: token })
   }
 
-  /*
-  login = () => {
-    window.location = 'http://localhost:8000/auth'
-  }
-  */
-
   render() {
     return (
       <div className={styles.container}>

@@ -1,0 +1,15 @@
+.table {
+  margin-top: 12px;
+}
+
+.search_container {
+  display: flex;
+  padding: 6px;
+  background-color: white;
+  border-radius: 3px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, .2);
+}
+
+.search_input {
+  margin-right: 3px;
+}

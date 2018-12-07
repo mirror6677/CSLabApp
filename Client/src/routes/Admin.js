@@ -40,12 +40,6 @@ class Main extends React.Component {
     this.setState({ nav })
   }
 
-  /*
-  logout = () => {
-    window.location = 'http://localhost:8000/auth/logout'
-  }
-  */
-
   handleLogout = () => {
     window.gapi.auth2.signOut().then(()=>{
       console.log('signed out!')
