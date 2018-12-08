@@ -69,12 +69,10 @@ export default {
     },
 
     assignmentAdded(state, action) {
-      console.log(action.payload)
       return Object.assign({}, state, action.payload)
     },
 
     assignmentUpdated(state, action) {
-      console.log(action.payload)
       return Object.assign({}, state, action.payload)
     }
   }

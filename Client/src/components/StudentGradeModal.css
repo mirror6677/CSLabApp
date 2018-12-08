@@ -1,3 +1,7 @@
 .download_icon {
   cursor: pointer;
 }
+
+.regrade_input {
+  margin-top: 12px;
+}

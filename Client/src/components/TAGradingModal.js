@@ -19,6 +19,33 @@ class TAGradingModal extends React.PureComponent {
   }
 
   componentDidMount() {
+    this.getFiles()
+    this.initializeFields()
+  }
+
+  componentDidUpdate(prevProps) {
+    const work = this.props.work
+    const prevWork = prevProps.work
+    if (work.grade !== prevWork.grade || work.comment !== prevWork.comment) {
+      this.initializeFields()
+    }
+    if (work._id !== prevWork._id) {
+      this.getFiles()
+    }
+  }
+
+  initializeFields = () => {
+    const work = this.props.work
+    const grade = work.grade ? work.grade : ''
+    const comment = work.comment ? work.comment : ''
+    this.setState({ 
+      grade, 
+      comment, 
+      ready: this.checkGradeValid(grade)
+    })
+  }
+
+  getFiles = () => {
     const { work, files } = this.props
     Object.keys(files[work._id]).forEach(file => {
       this.props.dispatch({
@@ -28,25 +55,6 @@ class TAGradingModal extends React.PureComponent {
           filename: file
         }
       })
-    })
-    this.initializeFields(work)
-  }
-
-  componentDidUpdate(prevProps) {
-    const work = this.props.work
-    const prevWork = prevProps.work
-    if (work.grade !== prevWork.grade || work.comment !== prevWork.comment) {
-      this.initializeFields(work)
-    }
-  }
-
-  initializeFields = work => {
-    const grade = work.grade ? work.grade : ''
-    const comment = work.comment ? work.comment : ''
-    this.setState({ 
-      grade, 
-      comment, 
-      ready: this.checkGradeValid(grade)
     })
   }
 

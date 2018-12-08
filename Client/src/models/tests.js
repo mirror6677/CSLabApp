@@ -102,7 +102,6 @@ export default {
 
     *runPylint({ payload }, { call, put }) {
       const { testId, workId, callback } = payload
-      console.log(testId)
       const data = yield call(runPylint, testId, workId)
       if (data.data) {
         if (data.data.error) {

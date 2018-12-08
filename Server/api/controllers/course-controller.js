@@ -32,12 +32,16 @@ exports.getCourse = function(req, res) {
   });
 };
 
-exports.getActiveCourse = function(req, res) {
-  Course.findOne({ active: true }, function(err, course) {
+exports.getActiveCourse = function(_, res) {
+  Course.find({ active: true }).lean().exec(function(err, courses) {
     if (err) {
       res.send({ error: err });
     } else {
-      res.json({ course });
+      if (courses.length > 0) {
+        res.json({ course: courses[courses.length - 1] });
+      } else {
+        res.send({ error: 'No active course' })
+      }
     }
   });
 };

@@ -20,6 +20,7 @@ require('./api/models/filename-test-model');
 require('./api/models/pylint-test-model');
 require('./api/models/blackbox-test-model');
 require('./api/models/test-result-model');
+require('./api/models/alert-model');
 
 /*
 // For clearing all content

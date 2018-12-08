@@ -83,7 +83,6 @@ export default {
           i++
         }
       }
-      console.log('Update course: ', course)
       const data = yield call(updateCourse, course)
       var res = {}
       res[data.data.course._id] = data.data.course
@@ -94,7 +93,6 @@ export default {
     },
 
     *deleteUserFromRoster({ payload }, { call, put }) {
-      console.log(payload)
       const data = yield call(updateCourse, payload)
       var res = {}
       res[data.data.course._id] = data.data.course

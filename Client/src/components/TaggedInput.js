@@ -2,6 +2,7 @@ import React from 'react'
 import { Tag, Input, Tooltip, Icon } from 'antd'
 
 export default class TaggedInput extends React.PureComponent {
+  
   state = {
     inputVisible: false,
     inputValue: '',

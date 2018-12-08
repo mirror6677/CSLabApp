@@ -51,7 +51,6 @@ export default {
     },
 
     courseAdded(state, action) {
-      console.log(action.payload)
       return Object.assign({}, state, action.payload)
     },
 

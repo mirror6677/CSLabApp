@@ -11,6 +11,7 @@ import files from './models/files'
 import tests from './models/tests'
 import testResults from './models/testResults'
 import grades from './models/grades'
+import alerts from './models/alerts'
 
 // 1. Initialize
 const app = dva()
@@ -30,6 +31,7 @@ app.model(files)
 app.model(tests)
 app.model(testResults)
 app.model(grades)
+app.model(alerts)
 
 // 4. Router
 app.router(require('./router').default)

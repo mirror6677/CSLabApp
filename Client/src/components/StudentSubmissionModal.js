@@ -113,7 +113,6 @@ class StudentSubmissionModal extends React.PureComponent {
   runPylintTest = () => {
     const { problems, problemId, tests, workId } = this.props
     const testIds = problems[problemId].tests
-    console.log(testIds)
     testIds.forEach((testId, index) => {
       if (tests[testId].category === TEST_CATEGORIES.PYLINT) {
         this.props.dispatch({

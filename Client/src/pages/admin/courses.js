@@ -9,6 +9,7 @@ import EditModal from '../../components/admin/EditModal'
 const { Meta } = Card
 
 class Courses extends React.PureComponent {
+  
   state = {
     showRosterModal: false,
     showEditModal: false,

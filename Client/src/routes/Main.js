@@ -55,7 +55,6 @@ class Main extends React.PureComponent {
       this.props.history.push('/admin')
     } else if (e.key === PROFILE_DROPDOWN_NAV.LOGOUT) {
       window.gapi.auth2.signOut().then(()=>{
-        console.log('signed out!')
         this.props.dispatch({ type: 'user/handleLogout' })
       })
     }

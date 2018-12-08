@@ -4,11 +4,22 @@ import { Table, Input, Button, Icon } from 'antd'
 import styles from './GradesTable.css'
 
 class GradesTable extends React.PureComponent {
+  
   state = {
     searchText: '',
   }
 
   componentDidMount() {
+    this.getGrades(this.props.courseId)
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.courseId !== this.props.courseId) {
+      this.getGrades(this.props.courseId)
+    }
+  }
+
+  getGrades = courseId => {
     this.props.dispatch({
       type: 'grades/getGrades',
       payload: this.props.courseId

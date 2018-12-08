@@ -42,7 +42,6 @@ class Main extends React.Component {
 
   handleLogout = () => {
     window.gapi.auth2.signOut().then(()=>{
-      console.log('signed out!')
       this.props.dispatch({ type: 'user/handleLogout' })
     })
   }

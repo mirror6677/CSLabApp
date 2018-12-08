@@ -65,12 +65,10 @@ export default {
     },
 
     problemAdded(state, action) {
-      console.log(action.payload)
       return Object.assign({}, state, action.payload)
     },
 
     problemUpdated(state, action) {
-      console.log(action.payload)
       return Object.assign({}, state, action.payload)
     }
   }

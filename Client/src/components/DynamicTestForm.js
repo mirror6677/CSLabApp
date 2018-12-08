@@ -65,7 +65,6 @@ class DynamicTestForm extends React.PureComponent {
   render() {
     const { addingNew } = this.state
     const { tests, files, solutionFiles } = this.props
-    console.log(tests)
 
     const formItemLayout = {
       labelCol: {
