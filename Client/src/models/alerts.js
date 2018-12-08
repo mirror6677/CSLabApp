@@ -1,4 +1,4 @@
-import { getAlerts, addAlert, updateAlert } from '../services/alerts'
+import { getAll, addAlert, updateAlert } from '../services/alerts'
 import { sortAlerts } from '../utils/sort'
 import ALERT_CATEGORIES from '../constants/alert_categories'
 
@@ -9,7 +9,7 @@ export default {
 
   effects: {
     *getAll({ payload }, { call, put }) {
-      const data = yield call(getAlerts, payload.data)
+      const data = yield call(getAll, payload.data)
       if (data.data) {
         yield put({
           type: 'alertsReceived',
@@ -21,10 +21,11 @@ export default {
     *createRegradeRequest({ payload }, { call }) {
       const { message, work } = payload.data
       const alert = {
+        user: work.graded_by,
+        course: work.course,
         category: ALERT_CATEGORIES.REGRADE.key,
         message,
-        entity: work._id,
-        user: work.graded_by
+        entity: work._id
       }
       const data = yield call(addAlert, alert)
       payload.callback && payload.callback(data)

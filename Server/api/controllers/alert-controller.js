@@ -2,7 +2,7 @@ const mongoose = require('mongoose'),
       Alert = mongoose.model('alert');
 
 exports.getAll = function(req, res) {
-  Alert.find({}).lean().exec(function(err, alerts) {
+  Alert.find(req.query).lean().exec(function(err, alerts) {
     if (err) {
       res.send({ error: err });
     } else {
@@ -50,14 +50,4 @@ exports.deleteAlert = function(req, res) {
       res.json({ alert });
     }
   });
-};
-
-exports.getUserAlerts = function(req, res) {
-  Alert.find({ user: req.params.user_id }).lean().exec(function(err, alerts) {
-    if (err) {
-      res.send({ error: err })
-    } else {
-      res.json({ alerts })
-    }
-  })
 };

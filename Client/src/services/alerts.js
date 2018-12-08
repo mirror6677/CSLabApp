@@ -1,7 +1,9 @@
 import request from '../utils/request'
+import queryString from 'query-string'
 
-export const getAlerts = userId => {
-  return request(`/alerts/user/${userId}`)
+export const getAll = payload => {
+  const qs = queryString.stringify(payload)
+  return request(`/alerts?${qs}`)
 }
 
 export const addAlert = alert => {
