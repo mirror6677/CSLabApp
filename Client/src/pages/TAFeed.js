@@ -54,7 +54,7 @@ class TAFeed extends React.PureComponent {
             {work._id}
             <div style={{ float: 'right', marginRight: '20px' }}>
               <span>
-                {work.graded ? 'Graded' : `Submitted on ${moment(work.last_modified).format('MM/DD/YYYY')}`}
+                {work.graded ? 'Graded' : `Submitted on ${moment(work.last_modified).fromNow()}`}
               </span>
               <Tooltip title='Grade' placement='topRight'>
                 <Button 
@@ -114,7 +114,7 @@ class TAFeed extends React.PureComponent {
       currWorkId: null
     })
     if (resp.data) {
-      message.success('You work has been submitted successfully')
+      message.success('Grade has been submitted successfully')
     } else {
       message.error(resp.err)
     }
@@ -190,7 +190,7 @@ class TAFeed extends React.PureComponent {
                       <div>
                         {problems[problem].name}
                         <span style={{ float: 'right', marginRight: '20px' }}>
-                            {`Due on ${moment(course.start_date).add({ days: problems[problem].day_offset, weeks: assignments[assignment].week_offset }).format('MM/DD/YYYY')}`}
+                            {`Due ${moment(course.start_date).add({ days: problems[problem].day_offset, weeks: assignments[assignment].week_offset }).fromNow()}`}
                           </span>
                       </div>
                     } 
@@ -211,6 +211,7 @@ class TAFeed extends React.PureComponent {
           totalPoints={problems[works[currWorkId].problem].total_points}
           onSubmit={this.onSubmit}
           onClose={this.onClose}
+          showNext={true}
         /> }
       </div>
     )

@@ -7,6 +7,7 @@ import PROFILE_DROPDOWN_NAV from '../constants/profile_dropdown_nav'
 import StudentFeed from '../pages/studentFeed'
 import TAFeed from '../pages/TAFeed'
 import CourseEditor from '../pages/courseEditor'
+import Alerts from '../pages/alerts'
 
 const { Header, Sider, Content } = Layout
 
@@ -123,6 +124,7 @@ class Main extends React.PureComponent {
             { nav === HOME_NAV.HOME && <StudentFeed /> }
             { nav === HOME_NAV.TA && <TAFeed /> }
             { nav === HOME_NAV.INSTRUCTOR && <CourseEditor /> }
+            { nav === HOME_NAV.ALERT && <Alerts /> }
           </Content>
         </Layout>
       </Layout>

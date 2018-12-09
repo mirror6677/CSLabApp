@@ -105,9 +105,26 @@ class TAGradingModal extends React.PureComponent {
     }, () => this.props.onSubmit(gradedWork, next))
   }
 
+  getActionFooterButton = () => {
+    const { showNext, loading } = this.props
+    const { ready } = this.state
+    return showNext ? ([
+      <Button key='submit' type='primary' loading={loading} onClick={ () => this.onSubmit(false) } disabled={!ready}>
+        Submit
+      </Button>,
+      <Button key='next' type='primary' loading={loading} onClick={ () => this.onSubmit(true) } disabled={!ready}>
+        {'Submit & Next'}
+      </Button>
+    ]) : ([
+      <Button key='submit' type='primary' loading={loading} onClick={ () => this.onSubmit(false) } disabled={!ready}>
+        Submit
+      </Button>
+    ])
+  }
+
   render() {
-    const { visible, loading, work, totalPoints, onClose, files } = this.props
-    const { selectedFile, comment, grade, ready } = this.state
+    const { visible, work, totalPoints, onClose, files } = this.props
+    const { selectedFile, comment, grade } = this.state
 
     const columns = [{
       title: 'Name',
@@ -146,12 +163,7 @@ class TAGradingModal extends React.PureComponent {
         maskClosable={false}
         footer={[
           <Button key='close' onClick={onClose}>Close</Button>,
-          <Button key='submit' type='primary' loading={loading} onClick={ () => this.onSubmit(false) } disabled={!ready}>
-            Submit
-          </Button>,
-          <Button key='next' type='primary' loading={loading} onClick={ () => this.onSubmit(true) } disabled={!ready}>
-            {'Submit & Next'}
-          </Button>
+          ...this.getActionFooterButton()
         ]}
       >
         <div className={styles.container}>

@@ -47,7 +47,7 @@ export default {
 
   reducers: {
     alertsReceived(_, action) {
-      return { ...action.payload }
+      return [ ...action.payload ]
     },
     
     alertUpdated(state, action) {
@@ -59,7 +59,7 @@ export default {
           newState.push(alert)
         }
       })
-      return newState
+      return newState.sort(sortAlerts)
     }
   }
 }

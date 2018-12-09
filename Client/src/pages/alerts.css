@@ -1,0 +1,16 @@
+.card {
+  background-color: white;
+  cursor: pointer;
+}
+
+.card_unread {
+  background-color: #EAF5FD;
+  cursor: pointer;
+}
+
+.alert_title {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 10pt;
+}

@@ -44,7 +44,7 @@ class StudentFeed extends React.PureComponent {
                 <Tooltip title={`${works[work].grade} out of ${problem.total_points}`}>
                   <span>Graded. Hover to see grade.</span>
                 </Tooltip>: <span>
-                  {`${status} Due on ${moment(start_date).add({ days: problem.day_offset, weeks: this.props.assignments[assignment].week_offset }).format('MM/DD/YYYY')}`}
+                  {`${status} Due ${moment(start_date).add({ days: problem.day_offset, weeks: this.props.assignments[assignment].week_offset }).fromNow()}`}
                 </span> 
               }
               { status === 'Graded.' ? 

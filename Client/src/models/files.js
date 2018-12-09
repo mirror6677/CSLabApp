@@ -9,10 +9,10 @@ export default {
   effects: {
     *getAll({ payload }, { call, put }) {
       var result = {}
-      for (var i = 0; i < payload.length; i++) {
-        const data = yield call(getAll, payload[i])
+      for (var i = 0; i < payload.data.length; i++) {
+        const data = yield call(getAll, payload.data[i])
         if (data.data) {
-          result[payload[i]] = data.data.files.reduce((result, item) => {
+          result[payload.data[i]] = data.data.files.reduce((result, item) => {
             result[item.Key.split('/', 2)[1]] = item
             return result
           }, {})
@@ -22,6 +22,7 @@ export default {
         type: 'filesReceived',
         payload: result
       })
+      payload.callback && payload.callback(result)
     },
 
     *getFile({ payload }, { call, put }) {

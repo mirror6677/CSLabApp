@@ -1,4 +1,4 @@
-import { getAll, addWork, updateWork } from '../services/works'
+import { getAll, getWork, addWork, updateWork } from '../services/works'
 
 export default {
 
@@ -22,12 +22,35 @@ export default {
         })
         yield put({
           type: 'files/getAll',
-          payload: Object.keys(result)
+          payload: {
+            data: Object.keys(result)
+          }
         })
         yield put({
           type: 'testResults/getAll',
           payload: testResults
         })
+      }
+    },
+
+    *getWork({ payload }, { call, put }) {
+      const data = yield call(getWork, payload.data)
+      if (data.data) {
+        var res = {}
+        res[data.data.work._id] = data.data.work
+        yield put({
+          type: 'workUpdated',
+          payload: res
+        })
+        yield put({
+          type: 'files/getAll',
+          payload: {
+            data: Object.keys(res),
+            callback: payload.callback
+          }
+        })
+      } else {
+        payload.callback && payload.callback({ err: data.err })
       }
     },
     
@@ -40,7 +63,7 @@ export default {
           type: 'workAdded',
           payload: res
         })
-        payload.callback && payload.callback({ data: data.data.work._id})
+        payload.callback && payload.callback({ data: data.data.work._id })
       } else {
         payload.callback && payload.callback({ err: data.err })
       }

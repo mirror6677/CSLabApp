@@ -4,6 +4,7 @@ import { Select } from 'antd'
 import styles from './stats.css'
 import STATS_MODE from '../../constants/stats_mode'
 import GradesTable from '../../components/admin/GradesTable'
+import moment from 'moment'
 
 const Option = Select.Option
 
@@ -45,7 +46,7 @@ class Stats extends React.PureComponent {
           >
             { Object.keys(courses).map(courseId => (
               <Option key={courseId} value={courseId}>
-                {`${courses[courseId].semester} (${courses[courseId].start_date.slice(0, 10)})`}
+                {`${courses[courseId].semester} (${moment(courses[courseId].start_date).format('MM/DD/YYYY')})`}
               </Option>
             )) }
           </Select>

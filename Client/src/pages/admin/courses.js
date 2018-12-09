@@ -5,6 +5,7 @@ import styles from './courses.css'
 import Course from '../../schemas/course'
 import RosterModal from '../../components/admin/RosterModal'
 import EditModal from '../../components/admin/EditModal'
+import moment from 'moment'
 
 const { Meta } = Card
 
@@ -34,7 +35,7 @@ class Courses extends React.PureComponent {
         >
           <Meta
             title={course.semester}
-            description={course.start_date.slice(0,10)}
+            description={moment(course.start_date).format('MM/DD/YYYY')}
             onClick={() => this.handleCourseNav(course._id)}
             className={styles.card_clickable}
           />

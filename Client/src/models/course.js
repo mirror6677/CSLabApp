@@ -23,6 +23,10 @@ export default {
           type: 'works/getAll',
           payload: { course, student }
         })
+        yield put({
+          type: 'alerts/getAll',
+          payload: { course, user: student }
+        })
       }
     },
 
@@ -40,6 +44,10 @@ export default {
         yield put({
           type: 'works/getAll',
           payload: { course: data.data.course._id, student: payload.student }
+        })
+        yield put({
+          type: 'alerts/getAll',
+          payload: { course: data.data.course._id, user: payload.student }
         })
       }
     }
