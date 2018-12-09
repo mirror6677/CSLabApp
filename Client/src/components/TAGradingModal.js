@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'dva'
-import { Alert, Button, Icon, Input, Modal, Table } from 'antd'
+import { Alert, Button, Icon, Input, Modal, Steps, Table, Tooltip } from 'antd'
 import styles from './TAGradingModal.css'
 import { API_ROOT } from '../constants/routes'
 import filesize from 'filesize'
@@ -8,6 +8,7 @@ import SyntaxHighlighter from 'react-syntax-highlighter'
 import { rainbow } from 'react-syntax-highlighter/styles/hljs'
 
 const { TextArea } = Input
+const { Step } = Steps
 
 class TAGradingModal extends React.PureComponent {
 
@@ -15,7 +16,8 @@ class TAGradingModal extends React.PureComponent {
     selectedFile: null,
     comment: '',
     grade: '',
-    ready: false
+    ready: false,
+    showTestResults: true
   }
 
   componentDidMount() {
@@ -60,7 +62,8 @@ class TAGradingModal extends React.PureComponent {
 
   selectFile = record => {
     this.setState({
-      selectedFile: record.key
+      selectedFile: record.key,
+      showTestResults: false
     })
   }
 
@@ -105,6 +108,32 @@ class TAGradingModal extends React.PureComponent {
     }, () => this.props.onSubmit(gradedWork, next))
   }
 
+  getTestStep = (testId, index) => {
+    const { work, tests, testResults } = this.props
+    const test = tests[testId]
+    const testResult = testResults[work.test_results[index]]
+    const title = testResult ? testResult.status : 'Waiting'
+    const content = testResult ? testResult.content : ''
+    var status
+    if (title === 'Waiting') {
+      status = 'wait'
+    } else if (title === 'Passed') {
+      status = 'finish'
+    } else if (title === 'Failed') {
+      status = 'error'
+    } else {
+      status = 'process'
+    }
+    return (
+      <Step 
+        key={index}
+        title={<Tooltip title={content}>{title}</Tooltip>} 
+        description={test.name} 
+        status={status}
+      />
+    )
+  }
+
   getActionFooterButton = () => {
     const { showNext, loading } = this.props
     const { ready } = this.state
@@ -122,9 +151,16 @@ class TAGradingModal extends React.PureComponent {
     ])
   }
 
+  showTestResults = () => {
+    this.setState({
+      selectedFile: null,
+      showTestResults: true
+    })
+  }
+
   render() {
-    const { visible, work, totalPoints, onClose, files } = this.props
-    const { selectedFile, comment, grade } = this.state
+    const { visible, work, problem, onClose, files } = this.props
+    const { selectedFile, comment, grade, showTestResults } = this.state
 
     const columns = [{
       title: 'Name',
@@ -185,6 +221,9 @@ class TAGradingModal extends React.PureComponent {
               }) }
             />
             <div>
+              <span className={styles.show_test_btn} onClick={this.showTestResults}>
+                Show test results
+              </span>
               <TextArea 
                 rows={4} 
                 value={comment} 
@@ -196,7 +235,7 @@ class TAGradingModal extends React.PureComponent {
                 value={grade}
                 onChange={this.onGradeChanged}
                 placeholder={'Grade'} 
-                addonAfter={`out of ${totalPoints}`}
+                addonAfter={`out of ${problem.totalPoints}`}
               />
             </div>
           </div>
@@ -210,13 +249,27 @@ class TAGradingModal extends React.PureComponent {
               <Alert message='File type not supported. Please use the download option from the file menu.' banner />
             </div> 
           )}
+          { showTestResults && (
+            <div className={styles.test_display}>
+              <p className={styles.test_header}>Automated Tests:</p>
+              <Steps 
+                direction='vertical' 
+                size={problem.tests.length > 3 ? 'small' : 'default'} 
+                current={work.test_results.length}
+              >
+                { problem.tests.map((testId, index) => this.getTestStep(testId, index)) }
+              </Steps>
+            </div>
+          ) }
         </div>
       </Modal>
     )
   }
 }
 
-export default connect(({ user, files }) => ({
+export default connect(({ user, files, tests, testResults }) => ({
   user,
-  files
+  files,
+  tests: tests.tests,
+  testResults
 }))(TAGradingModal)

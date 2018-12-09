@@ -25,3 +25,19 @@
 .download_icon {
   cursor: pointer;
 }
+
+.test_display {
+  flex: 2;
+  padding-left: 12px;
+}
+
+.test_header {
+  margin-bottom: 12px;
+}
+
+.show_test_btn {
+  text-decoration-line: underline;
+  color: gray;
+  cursor: pointer;
+  font-size: 10pt;
+}

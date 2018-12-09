@@ -5,8 +5,8 @@ import styles from './StudentSubmissionModal.css'
 import { API_ROOT } from '../constants/routes'
 import TEST_CATEGORIES from '../constants/test_categories'
 
-const Dragger = Upload.Dragger
-const Step = Steps.Step
+const { Dragger } = Upload
+const { Step } = Steps
 
 class StudentSubmissionModal extends React.PureComponent {
 

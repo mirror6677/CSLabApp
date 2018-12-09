@@ -136,7 +136,7 @@ class RegradeModal extends React.PureComponent {
           visible={showGradingModal}
           loading={submissionLoading}
           work={works[alert.entity]}
-          totalPoints={problems[works[alert.entity].problem].total_points}
+          problem={problems[works[alert.entity].problem]}
           onSubmit={this.onGradingSubmit}
           onClose={this.onGradingClose}
           showNext={false}
