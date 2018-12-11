@@ -1,4 +1,4 @@
-import { getAll, addCourse, updateCourse } from '../services/courses'
+import { getAll, addCourse, updateCourse, cloneCourse } from '../services/courses'
 
 export default {
 
@@ -32,6 +32,12 @@ export default {
       }
     },
 
+    *cloneCourse({ payload }, { call, put }) {
+      const { cloneFrom, ...course } = payload
+      const data = yield call(cloneCourse, course, cloneFrom)
+      console.log(data)                                                           
+    },                             
+
     *updateCourse({ payload }, { call, put }) {
       const data = yield call(updateCourse, payload)
       if (data.data) {
@@ -42,6 +48,38 @@ export default {
           payload: res
         })
       }
+    },
+
+    *switchCourse({ payload }, { put }) {
+      yield put({
+        type: 'assignments/assignmentsReceived',
+        payload: {}
+      })
+      yield put({
+        type: 'problems/problemsReceived',
+        payload: {}
+      })
+      yield put({
+        type: 'tests/testsReceived',
+        payload: {}
+      })
+      yield put({
+        type: 'works/worksReceived',
+        payload: {}
+      })
+      yield put({
+        type: 'files/filesReceived',
+        payload: {}
+      })
+      yield put({
+        type: 'testResults/testResultsReceived',
+        payload: {}
+      })
+      yield put({
+        type: 'alerts/alertsReceived',
+        payload: []
+      })
+      payload && payload()
     }
   },
 

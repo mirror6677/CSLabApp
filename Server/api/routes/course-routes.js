@@ -13,4 +13,7 @@ module.exports = function(app) {
     .get(courses.getCourse)
     .put(courses.updateCourse)
     .delete(courses.deleteCourse);
+
+  app.route('/courses/clone/:course_id')
+    .post(courses.cloneCourse);
 };

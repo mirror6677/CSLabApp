@@ -47,7 +47,14 @@ class Courses extends React.PureComponent {
   }
 
   handleCourseNav = courseId => {
-    this.props.history.push(`/archive/${courseId}`)
+    this.props.dispatch({
+      type: 'courses/switchCourse',
+      payload: this.onCourseContentCleared(courseId)
+    })
+  }
+
+  onCourseContentCleared = courseId => {
+    return () => this.props.history.push(`/archive/${courseId}`)
   }
 
   openRosterModal = course => {
@@ -180,7 +187,7 @@ class Courses extends React.PureComponent {
         payload: {
           semester,
           start_date: start_date.toDate(),
-          clone_from: cloneFrom
+          cloneFrom
         }
       })
       this.setState({

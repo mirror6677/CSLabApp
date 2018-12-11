@@ -13,8 +13,8 @@ export const getActiveCourse = () => {
 }
 
 export const addCourse = course => {
-  var headers = new Headers();
-  headers.append("Content-Type", "application/json");
+  var headers = new Headers()
+  headers.append("Content-Type", "application/json")
   return request('/courses', {
     headers,
     method: 'post',
@@ -22,9 +22,19 @@ export const addCourse = course => {
   })
 }
 
+export const cloneCourse = (course, cloneFrom) => {
+  var headers = new Headers()
+  headers.append("Content-Type", "application/json")
+  return request(`/courses/clone/${cloneFrom}`, {
+    headers,
+    method: 'post',
+    body: JSON.stringify(course)
+  })
+}
+
 export const updateCourse = course => {
-  var headers = new Headers();
-  headers.append("Content-Type", "application/json");
+  var headers = new Headers()
+  headers.append("Content-Type", "application/json")
   return request(`/courses/${course._id}`, {
     headers,
     method: 'put',
