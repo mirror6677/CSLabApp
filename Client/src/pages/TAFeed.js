@@ -54,7 +54,7 @@ class TAFeed extends React.PureComponent {
             {work._id}
             <div style={{ float: 'right', marginRight: '20px' }}>
               <span>
-                {work.graded ? 'Graded' : `Submitted on ${moment(work.last_modified).fromNow()}`}
+                {work.graded ? 'Graded' : `Submitted on ${moment(work.last_modified).format('MM/DD/YYYY')}`}
               </span>
               <Tooltip title='Grade' placement='topRight'>
                 <Button 
@@ -190,7 +190,7 @@ class TAFeed extends React.PureComponent {
                       <div>
                         {problems[problem].name}
                         <span style={{ float: 'right', marginRight: '20px' }}>
-                            {`Due ${moment(course.start_date).add({ days: problems[problem].day_offset, weeks: assignments[assignment].week_offset }).fromNow()}`}
+                            {`Due ${moment(course.start_date).add({ days: problems[problem].day_offset, weeks: assignments[assignment].week_offset }).format('MM/DD/YYYY')}`}
                           </span>
                       </div>
                     } 

@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'dva'
-import { Card, Col, DatePicker, Icon, Input, Modal, Row } from 'antd'
+import { Card, Col, DatePicker, Icon, Input, Modal, Row, Select, message } from 'antd'
 import styles from './courses.css'
 import Course from '../../schemas/course'
 import RosterModal from '../../components/admin/RosterModal'
@@ -8,6 +8,7 @@ import EditModal from '../../components/admin/EditModal'
 import moment from 'moment'
 
 const { Meta } = Card
+const { Option } = Select
 
 class Courses extends React.PureComponent {
   
@@ -17,6 +18,7 @@ class Courses extends React.PureComponent {
     tab: 'new',
     showNewCourseModal: false,
     newCourse: new Course(),
+    cloneFrom: null,
     rosterCourse: new Course(),
     editCourse: new Course()
   }
@@ -113,7 +115,9 @@ class Courses extends React.PureComponent {
   }
 
   getCloneCourseModal = visible => {
-    const newCourse = this.state.newCourse
+    const { newCourse, cloneFrom } = this.state
+    const courses = this.props.courses
+    const sortedCourseIds = Object.keys(courses).sort((a, b) => b.start_date - a.start_date)
     return (
       <Modal
         title={'Clone existing course'}
@@ -122,6 +126,7 @@ class Courses extends React.PureComponent {
         onCancel={ () => this.setState({ showNewCourseModal: false }) }
       >
         <DatePicker
+          className={styles.formItem}
           placeholder='Start date'
           value={newCourse.start_date}
           onChange={ date => this.setState({ newCourse: Object.assign({}, newCourse, { start_date: date }) }) }
@@ -132,6 +137,18 @@ class Courses extends React.PureComponent {
           value={newCourse.semester}
           onChange={ e => this.setState({ newCourse: Object.assign({}, newCourse, { semester: e.target.value }) }) } 
         />
+        <Select 
+          value={cloneFrom} 
+          onChange={cloneFrom => this.setState({ cloneFrom })}
+          className={styles.formItem} 
+          style={{ width: 250 }}
+        >
+          { sortedCourseIds.map(courseId => (
+            <Option value={courseId} key={courseId}>
+              {`${courses[courseId].semester} (${moment(courses[courseId].start_date).format('MM/DD/YYYY')})`}
+            </Option>
+          )) }
+        </Select>
       </Modal>
     )
   }
@@ -145,14 +162,35 @@ class Courses extends React.PureComponent {
         type: 'courses/addCourse',
         payload: newCourse
       })
+      this.setState({
+        showNewCourseModal: false,
+        newCourse: new Course()
+      })
+    } else {
+      message.error('You must fill out all fields')
     }
-    this.setState({
-      showNewCourseModal: false,
-      newCourse: new Course()
-    })
   }
 
   submitCloneCourse = () => {
+    const { newCourse, cloneFrom } = this.state
+    const { semester, start_date } = newCourse
+    if (semester && start_date && cloneFrom) {
+      this.props.dispatch({
+        type: 'courses/cloneCourse',
+        payload: {
+          semester,
+          start_date: start_date.toDate(),
+          clone_from: cloneFrom
+        }
+      })
+      this.setState({
+        showNewCourseModal: false,
+        newCourse: new Course(),
+        cloneFrom: null
+      })
+    } else {
+      message.error('You must fill out all fields')
+    }
   }
 
   render() {
