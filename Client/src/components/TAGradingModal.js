@@ -235,7 +235,7 @@ class TAGradingModal extends React.PureComponent {
                 value={grade}
                 onChange={this.onGradeChanged}
                 placeholder={'Grade'} 
-                addonAfter={`out of ${problem.totalPoints}`}
+                addonAfter={`out of ${problem.total_points}`}
               />
             </div>
           </div>
