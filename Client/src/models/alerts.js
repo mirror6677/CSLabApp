@@ -9,7 +9,7 @@ export default {
 
   effects: {
     *getAll({ payload }, { call, put }) {
-      const data = yield call(getAll, payload.data)
+      const data = yield call(getAll, payload)
       if (data.data) {
         yield put({
           type: 'alertsReceived',
