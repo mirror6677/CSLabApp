@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'dva'
-import { Avatar, Dropdown, Icon, Layout, Menu } from 'antd'
+import { Avatar, Badge, Dropdown, Icon, Layout, Menu } from 'antd'
 import styles from './Main.css'
 import HOME_NAV from '../constants/home_nav'
 import PROFILE_DROPDOWN_NAV from '../constants/profile_dropdown_nav'
@@ -62,7 +62,7 @@ class Main extends React.PureComponent {
   }
 
   render() {
-    const { user, course } = this.props
+    const { user, course, numAlerts } = this.props
     const { id, name, image, isAdmin } = user
     const { collapsed, nav } = this.state
 
@@ -94,7 +94,9 @@ class Main extends React.PureComponent {
             </Menu.Item>
             <Menu.Item key={HOME_NAV.ALERT}>
               <Icon type="notification" />
-              <span>Alerts</span>
+              <Badge count={numAlerts} dot>
+                <span>Alerts</span>
+              </Badge>
             </Menu.Item>
             { course._id && (isAdmin || course.TAs.includes(id)) && <Menu.Item key={HOME_NAV.TA}>
               <Icon type="solution" />
@@ -132,7 +134,8 @@ class Main extends React.PureComponent {
   }
 }
 
-export default connect(({ user, course }) => ({
+export default connect(({ user, course, alerts }) => ({
   user, 
-  course
+  course,
+  numAlerts: alerts.filter(alert => !alert.read).length
 }))(Main)
