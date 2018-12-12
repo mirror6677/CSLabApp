@@ -4,7 +4,7 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     ROOT = 'http://localhost:8000'
 } else {
     // production code
-    ROOT = 'http://www.eg.bucknell.edu:4007'
+    ROOT = 'https://www.eg.bucknell.edu/labapp'
 }
 
 function parseJSON(response) {
