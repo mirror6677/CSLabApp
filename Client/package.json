@@ -1,8 +1,9 @@
 {
   "private": true,
+  "homepage": "https://www.eg.bucknell.edu/~labapp", 
   "scripts": {
     "start": "PORT=3000 roadhog server",
-    "build": "roadhog build",
+    "build": "roadhog build && /usr/bin/cp -rf dist/* ~/public_html",
     "lint": "eslint --ext .js src test",
     "precommit": "npm run lint"
   },
